@@ -21,10 +21,10 @@ Developers can use standard tools to fetch data:
 
 ```bash
 # Get text report (Automatic CLI detection)
-curl [dns.wiredalter.com/google.com](https://dns.wiredalter.com/google.com)
+curl dns.wiredalter.com/google.com
 
 # Get full JSON data
-curl [dns.wiredalter.com/api/lookup/google.com](https://dns.wiredalter.com/api/lookup/google.com)
+curl dns.wiredalter.com/api/lookup/google.com
 ```
 
 **Example JSON Response:**
@@ -51,7 +51,7 @@ curl [dns.wiredalter.com/api/lookup/google.com](https://dns.wiredalter.com/api/l
 1. **Clone the repository:**
 
 ```bash
-git clone [https://github.com/buildplan/dns-service.git](https://github.com/buildplan/dns-service.git)
+git clone https://github.com/buildplan/dns-service.git
 cd dns-service
 ```
 
