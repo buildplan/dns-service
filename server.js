@@ -7,8 +7,8 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 
 // --- CONFIGURATION ---
-app.set('json spaces', 2);
-app.set('trust proxy', 1);
+app.set('json spaces', 2); // Pretty print JSON by default
+app.set('trust proxy', 1); // Security: Trust only the immediate proxy (Nginx)
 app.disable('x-powered-by');
 
 // Serve Static Files
@@ -29,19 +29,22 @@ const globalLimiter = rateLimit({
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
-    validate: { trustProxy: false },
+    validate: { trustProxy: false }, // Disable the warning
     message: { error: "Too many requests. Please try again later." }
 });
 app.use(globalLimiter);
 
-// This must come BEFORE the /:domain wildcard route
+// --- ROUTES ---
+
+// 1. Terms Page (Must be before wildcard)
 app.get('/terms', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'terms.html'));
 });
 
-// --- API LOGIC ---
+// 2. API Endpoint (JSON)
 app.get('/api/lookup/:domain', async (req, res) => {
     const domain = req.params.domain;
+    const ua = req.headers['user-agent'];
 
     if (!isValidDomain(domain)) {
         return res.status(400).json({ error: "Invalid domain format." });
@@ -76,19 +79,34 @@ app.get('/api/lookup/:domain', async (req, res) => {
             }
         };
 
+        // If CLI, send stringified JSON
+        if (isCli(ua)) {
+            res.header('Content-Type', 'application/json');
+            return res.send(JSON.stringify(data, null, 2) + '\n');
+        }
+
+        // Otherwise standard JSON (Browsers handle this fine)
         res.json(data);
 
     } catch (error) {
-        res.status(500).json({ error: "Lookup failed or domain not found" });
+        // [FIX] Handle errors for CLI nicely too
+        const errData = { error: "Lookup failed or domain not found" };
+        if (isCli(ua)) {
+             res.status(500).header('Content-Type', 'application/json');
+             return res.send(JSON.stringify(errData, null, 2) + '\n');
+        }
+        res.status(500).json(errData);
     }
 });
 
-// --- CLI ROUTE (Curl) ---
+// 3. CLI Text Report (curl dns.wiredalter.com/google.com)
 app.get('/:domain', async (req, res, next) => {
+    // Skip internal files
     if (!req.params.domain.includes('.')) return next();
 
     const ua = req.headers['user-agent'];
 
+    // Only intercept CLI tools for the text report
     if (isCli(ua)) {
         const domain = req.params.domain;
         try {
@@ -117,7 +135,7 @@ app.get('/:domain', async (req, res, next) => {
     next();
 });
 
-// --- ROOT & FALLBACK ---
+// 4. Root & Fallback
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
