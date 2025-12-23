@@ -8,7 +8,7 @@ const app = express();
 
 // --- CONFIGURATION ---
 app.set('json spaces', 2);
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
 // Serve Static Files
@@ -26,12 +26,18 @@ function isCli(userAgent) {
 // --- RATE LIMITER ---
 const globalLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 200, // Higher limit for DNS (lighter load)
+    max: 200,
     standardHeaders: true,
     legacyHeaders: false,
+    validate: { trustProxy: false },
     message: { error: "Too many requests. Please try again later." }
 });
 app.use(globalLimiter);
+
+// This must come BEFORE the /:domain wildcard route
+app.get('/terms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'terms.html'));
+});
 
 // --- API LOGIC ---
 app.get('/api/lookup/:domain', async (req, res) => {
@@ -44,7 +50,7 @@ app.get('/api/lookup/:domain', async (req, res) => {
     try {
         const start = Date.now();
 
-        // Run lookups in parallel for speed
+        // Run lookups in parallel
         const [a, aaaa, mx, txt, ns, soa] = await Promise.allSettled([
             dns.resolve4(domain),
             dns.resolve6(domain),
@@ -54,7 +60,6 @@ app.get('/api/lookup/:domain', async (req, res) => {
             dns.resolveSoa(domain)
         ]);
 
-        // Helper to extract values safely
         const getVal = (result) => result.status === 'fulfilled' ? result.value : [];
 
         const data = {
@@ -65,7 +70,7 @@ app.get('/api/lookup/:domain', async (req, res) => {
                 A: getVal(a),
                 AAAA: getVal(aaaa),
                 MX: getVal(mx),
-                TXT: getVal(txt).flat(), // Flatten array of arrays
+                TXT: getVal(txt).flat(),
                 NS: getVal(ns),
                 SOA: getVal(soa) || null
             }
@@ -79,14 +84,11 @@ app.get('/api/lookup/:domain', async (req, res) => {
 });
 
 // --- CLI ROUTE (Curl) ---
-// curl dns.wiredalter.com/google.com
 app.get('/:domain', async (req, res, next) => {
-    // If it's a file request (like style.css) or internal, skip
     if (!req.params.domain.includes('.')) return next();
 
     const ua = req.headers['user-agent'];
 
-    // Only intercept CLI tools
     if (isCli(ua)) {
         const domain = req.params.domain;
         try {
@@ -115,16 +117,14 @@ app.get('/:domain', async (req, res, next) => {
     next();
 });
 
-// --- ROOT ROUTE ---
+// --- ROOT & FALLBACK ---
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Fallback
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Use port 5000 to avoid conflict with IP Service (4040)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 DNS Service running on ${PORT}`));
