@@ -17,14 +17,34 @@ Visit the homepage, [dns.wiredalter.com](https://dns.wiredalter.com) to search f
 
 ### CLI / API Access
 
-Developers can use standard tools to fetch data:
+Developers can use standard tools to fetch data over HTTPS.
+
+#### 1. Text Report (CLI Friendly)
+
+By default, `curl` requests receive a human-readable text summary.
 
 ```bash
-# Get text report (Automatic CLI detection)
-curl dns.wiredalter.com/google.com
+curl https://dns.wiredalter.com/google.com
+```
 
-# Get full JSON data
-curl dns.wiredalter.com/api/lookup/google.com
+**Sample Output:**
+
+```text
+🔎 DNS Report: google.com
+------------------------------------------------
+A Records   : 142.250.187.206
+MX Records  : smtp.google.com (10)
+Nameservers : ns1.google.com, ns2.google.com
+TXT Records : 12 found (use API for full list)
+------------------------------------------------
+```
+
+#### 2. Full JSON Data (API)
+
+If the text report truncates data (e.g., "use /json to view") or if you need raw data for scripts, use the API endpoint:
+
+```bash
+curl https://dns.wiredalter.com/api/lookup/google.com
 ```
 
 **Example JSON Response:**
@@ -57,7 +77,7 @@ cd dns-service
 
 2. **Run with Docker:**
 
-**Option 1: Quick Start**: Default Docker compose file in the repo uses pre-built image from our registry `ghcr.io/buildplan/dns-service:latest`.
+**Option 1: Quick Start**: Default Docker compose file in the repo uses pre-built image from GitHub registry `ghcr.io/buildplan/dns-service:latest`.
 
 ```bash
 docker compose up -d
