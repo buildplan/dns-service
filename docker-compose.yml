@@ -1,7 +1,7 @@
 services:
   dns-service:
-    build: .
-    # image: ghcr.io/buildplan/dns-service:latest
+    # build: .
+    image: ghcr.io/buildplan/dns-service:latest
     container_name: dns-service
     restart: unless-stopped
     user: "node"
