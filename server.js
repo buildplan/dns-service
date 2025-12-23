@@ -124,7 +124,7 @@ app.get('/:domain', async (req, res, next) => {
             output += `A Records   : ${getStr(a).join(', ') || '-'}\n`;
             output += `MX Records  : ${getStr(mx).map(m => `${m.exchange} (${m.priority})`).join(', ') || '-'}\n`;
             output += `Nameservers : ${getStr(ns).join(', ') || '-'}\n`;
-            output += `TXT Records : ${getStr(txt).flat().length} found (use /json to view)\n`;
+	    output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${domain} for full list)\n`;
             output += `------------------------------------------------\n`;
 
             return res.send(output);
