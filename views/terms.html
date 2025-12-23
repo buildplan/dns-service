@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms & Privacy - WiredAlter IP</title>
+    <title>Terms & Privacy - WiredAlter DNS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; }</style>
 </head>
@@ -20,10 +20,10 @@
             <h2 class="text-xl font-semibold text-blue-400">1. Privacy & Cookies</h2>
             <p class="text-slate-300 leading-relaxed">
                 We are committed to privacy transparency. 
-                <span class="font-bold text-white">We do not log, store, or share your IP address or query data.</span>
+                <span class="font-bold text-white">We do not log, store, or share your search queries or DNS data.</span>
             </p>
             <ul class="list-disc pl-5 text-slate-400 space-y-1">
-                <li>Your IP address is processed in real-time memory only to return the result.</li>
+                <li>Your search terms (domains) are processed in real-time memory only to return the result.</li>
                 <li>No database of user queries is maintained by us.</li>
             </ul>
             
@@ -43,36 +43,26 @@
                 This service is provided <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong> without any warranty of any kind, express or implied.
             </p>
             <p class="text-slate-400 text-sm">
-                We do not guarantee the accuracy, completeness, or timeliness of the data shown. The geolocation data is an approximation and may be incorrect. You should not rely on this service for critical decision-making, emergency services, or legal proof of location. WiredAlter IP Service (<a heref="https://ip.wiredalter.com" class="text-blue-400 hover:underline">ip.wiredalter.com</a>) shall not be liable for any damages resulting from the use of this information.
+                We do not guarantee the accuracy, completeness, or propagation status of the DNS records shown. DNS data can vary based on global propagation and caching. You should not rely on this service for critical infrastructure decision-making. WiredAlter DNS Service (<a href="https://dns.wiredalter.com" class="text-blue-400 hover:underline">dns.wiredalter.com</a>) shall not be liable for any damages resulting from the use of this information.
             </p>
         </section>
 
         <section class="space-y-3">
-            <h2 class="text-xl font-semibold text-blue-400">3. Third-Party Data Attribution</h2>
+            <h2 class="text-xl font-semibold text-blue-400">3. Data Source</h2>
             <p class="text-slate-300">
-                This service relies on external databases. By using this service, you acknowledge the following legal notices required by data providers:
+                This service queries the public Domain Name System (DNS) in real-time.
             </p>
             
             <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-sm text-slate-400 space-y-4">
                 <div>
-                    <strong class="text-slate-300 block mb-1">MaxMind GeoLite2</strong>
-                    <p>This product includes GeoLite2 data created by MaxMind, available from <a href="https://www.maxmind.com/en/end-user-license-agreement" target="_blank" class="text-blue-400 hover:underline">MaxMind End User License Agreement</a>.</p>
-                </div>
-
-                <div>
-                    <strong class="text-slate-300 block mb-1">IP2Location LITE</strong>
-                    <p>WiredAlter IP Service uses the IP2Location LITE database for <a href="https://lite.ip2location.com/terms-of-use" target="_blank" class="text-blue-400 hover:underline">IP2Location Terms of Use</a>.</p>
-                </div>
-                
-                <div>
-                    <strong class="text-slate-300 block mb-1">OpenStreetMap</strong>
-                    <p>Map data is © <a href="https://www.openstreetmap.org/copyright" target="_blank" class="text-blue-400 hover:underline">OpenStreetMap</a> contributors.</p>
+                    <strong class="text-slate-300 block mb-1">Live Lookups</strong>
+                    <p>Results reflect the current state of DNS records as seen from our server's perspective. Due to TTL (Time To Live) and propagation, results may differ from what you see locally.</p>
                 </div>
             </div>
         </section>
 
         <div class="pt-8 text-center">
-            <a href="/" class="text-slate-400 hover:text-white underline decoration-slate-600 underline-offset-4">← Back to IP Echo</a>
+            <a href="/" class="text-slate-400 hover:text-white underline decoration-slate-600 underline-offset-4">← Back to DNS Lookup</a>
         </div>
 
     </div>
