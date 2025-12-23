@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>WiredAlter DNS Lookup</title>
+    <meta name="description" content="Free DNS lookup tool. Check A, AAAA, MX, NS, and TXT records instantly via browser or CLI (curl/wget).">
+    <meta name="keywords" content="dns lookup, dns check, mx record lookup, nameserver check, txt record lookup, dns propagation, developer api, wiredalter">
+    <meta name="author" content="WiredAlter">
+    <link rel="canonical" href="https://dns.wiredalter.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dns.wiredalter.com/">
+    <meta property="og:title" content="WiredAlter DNS - Professional Lookup Tool">
+    <meta property="og:description" content="Instant DNS record checks (A, MX, NS, TXT). Browser and CLI supported.">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><text x='50' y='70' font-family='sans-serif' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>DNS</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .search-input { background: rgba(15, 23, 42, 0.8); transition: all 0.2s; }
+        .search-input:focus { background: rgba(30, 41, 59, 1); border-color: #3b82f6; outline: none; }
+        
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #1e293b; color: #fff; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); font-size: 14px; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body class="bg-[#0b1120] text-slate-300 min-h-screen flex flex-col">
+
+    <div id="toast">Notification</div>
+
+    <nav class="absolute top-0 left-0 w-full p-6 flex flex-col md:flex-row justify-between items-center z-10 gap-4">
+        <div class="flex items-center gap-6">
+            <div class="text-2xl font-bold tracking-tight text-white">
+                Wired<span class="text-blue-500">Alter</span>
+            </div>
+            
+            <div class="hidden md:flex gap-1 bg-slate-800/50 rounded-lg p-1 border border-slate-700/50 backdrop-blur-sm">
+                <a href="https://ip.wiredalter.com" class="px-3 py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">IP</a>
+                <a href="#" class="px-3 py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
+            </div>
+        </div>
+
+        <div class="flex gap-4 text-sm text-slate-500 font-medium">
+            <a href="https://ip.wiredalter.com/terms" class="hover:text-slate-300 transition-colors">Terms</a>
+            <span class="text-slate-700">|</span>
+            <a href="https://github.com/buildplan" class="hover:text-slate-300 transition-colors">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-20 w-full space-y-10">
+
+        <div class="text-center space-y-6 max-w-3xl mx-auto mt-6 md:mt-0">
+            <div class="space-y-2">
+                <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tighter">DNS <span class="text-blue-500">Lookup</span></h1>
+                <p class="text-lg md:text-xl text-slate-400">Instant records for A, AAAA, MX, NS, and TXT.</p>
+            </div>
+
+            <div class="relative max-w-lg mx-auto mt-6">
+                <input type="text" id="domainInput" class="block w-full p-4 pl-6 text-sm text-white border border-slate-700 rounded-xl search-input placeholder-slate-500" placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
+                <button onclick="lookup()" class="text-white absolute right-2.5 top-2.5 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2">Check</button>
+            </div>
+        </div>
+
+        <div id="error-msg" class="hidden max-w-lg mx-auto text-center text-red-400 bg-red-900/10 p-4 rounded-xl border border-red-900/30"></div>
+
+        <div id="results" class="hidden grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
+                <div class="text-blue-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span> A Records (IPv4)
+                </div>
+                <div id="res-a" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+            </div>
+
+            <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
+                <div class="text-purple-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span> Mail Servers (MX)
+                </div>
+                <div id="res-mx" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+            </div>
+
+            <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
+                <div class="text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Nameservers
+                </div>
+                <div id="res-ns" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+            </div>
+
+            <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
+                <div class="text-orange-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-orange-500"></span> TXT Records
+                </div>
+                <div id="res-txt" class="font-mono text-xs text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-8 border-t border-slate-800/60">
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-white">CLI Access</h3>
+                <div class="bg-[#0f172a] rounded-xl p-5 font-mono text-sm border border-slate-800 space-y-3">
+                    <div class="group cursor-pointer" onclick="copyText('cmd1')">
+                        <div class="flex justify-between text-slate-300 hover:text-white"><code id="cmd1">$ curl dns.wiredalter.com/google.com</code><span class="text-blue-500 opacity-0 group-hover:opacity-100">Copy</span></div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 pt-6">
+                    <a href="https://github.com/buildplan/dns-service" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-[#24292e] hover:bg-[#2f363d] text-white text-sm rounded-lg font-medium transition-all duration-200 border border-white/5">
+                        <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+                        Open Source
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-sm">
+                <div class="space-y-1">
+                    <h4 class="font-bold text-blue-400">What is this?</h4>
+                    <p class="text-slate-400">A free tool to check DNS propagation and record details directly from our servers.</p>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-blue-400">Does it cache results?</h4>
+                    <p class="text-slate-400">We respect the TTL (Time To Live) of the records, but our lookups are performed in real-time.</p>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-blue-400">API Usage?</h4>
+                    <p class="text-slate-400">You can use <code>/api/lookup/domain.com</code> to get a JSON response for your applications.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/60 bg-[#0b1120] py-8 text-center text-slate-600 text-sm">
+        <p>&copy; <span id="year"></span> WiredAlter DNS Service.</p>
+    </footer>
+
+    <script>
+        document.getElementById("year").innerText = new Date().getFullYear();
+
+        function showToast(message) {
+            const x = document.getElementById("toast");
+            x.innerText = message; x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+        function copyText(id) { 
+            navigator.clipboard.writeText(document.getElementById(id).innerText.replace('$ ', '')).then(() => showToast('Command Copied!')); 
+        }
+
+        async function lookup() {
+            const domain = document.getElementById('domainInput').value.trim();
+            if(!domain) return;
+            
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('error-msg').classList.add('hidden');
+
+            try {
+                const res = await fetch(`/api/lookup/${domain}`);
+                const data = await res.json();
+
+                if(data.error) throw new Error(data.error);
+
+                // Helper to render lists
+                const render = (id, list, mapFn) => {
+                    const el = document.getElementById(id);
+                    el.innerHTML = list.length ? list.map(item => 
+                        `<div class="border-b border-slate-800/50 last:border-0 pb-1 last:pb-0">${mapFn ? mapFn(item) : item}</div>`
+                    ).join('') : '<span class="text-slate-600 italic">No records found</span>';
+                };
+
+                render('res-a', data.records.A);
+                render('res-mx', data.records.MX, m => `<span class="text-slate-500 mr-2 font-bold w-6 inline-block">${m.priority}</span> ${m.exchange}`);
+                render('res-ns', data.records.NS);
+                render('res-txt', data.records.TXT, t => `<div class="p-2 bg-slate-800/50 rounded break-all font-mono text-xs text-slate-400 mb-1">${t}</div>`);
+
+                document.getElementById('results').classList.remove('hidden');
+                document.getElementById('results').classList.add('grid');
+
+            } catch (err) {
+                const errDiv = document.getElementById('error-msg');
+                errDiv.innerText = err.message || "Lookup Failed";
+                errDiv.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
