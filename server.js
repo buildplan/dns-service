@@ -144,5 +144,6 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
+// Use the environment variable PORT, or default to 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 DNS Service running on ${PORT}`));
