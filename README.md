@@ -66,15 +66,42 @@ curl https://dns.wiredalter.com/api/lookup/google.com
 }
 ```
 
-**Example Use Case (jq):**
-Extract just the expiry date or registrar using a tool like `jq`:
+#### Example Use
+
+##### Security Audit: Extract SPF Records
+
+Verify if a domain's email security policies (SPF) are correctly configured. This one-liner instantly grabs the SPF string from the noise of other TXT records.
 
 ```bash
-# Get just the expiry date
-curl -s https://whois.wiredalter.com/api/lookup/google.com | jq .parsed.expires
+# Filter TXT records to find only the SPF policy
+curl -s https://dns.wiredalter.com/api/lookup/google.com | jq -r '.records.TXT[] | select(contains("v=spf1"))'
+```
 
-# Get the Registrar
-curl -s https://whois.wiredalter.com/api/lookup/google.com | jq .parsed.registrar
+##### Monitor DNS Propagation (SOA Serial)
+
+Monitor DNS zone update with change to serial number, confirming an update has gone live.
+
+```bash
+# check the current Zone Serial Number
+curl -s https://dns.wiredalter.com/api/lookup/google.com | jq '.records.SOA.serial'
+```
+
+##### Fetch Mail Servers (MX)
+
+Verify mail servers are pointing to the right provider (e.g., verifying Google Workspace setup).
+
+```bash
+# List all mail servers and their priority
+curl -s https://dns.wiredalter.com/api/lookup/google.com | jq -r '.records.MX[] | "\(.priority) \(.exchange)"'
+```
+
+#### IPv6 Readiness Check
+
+Verify if a domain has valid IPv6 addresses (AAAA records) configured.
+
+```bash
+# Returns "true" if IPv6 records exist, "false" otherwise
+curl -s https://dns.wiredalter.com/api/lookup/google.com | jq '.records.AAAA | length > 0'
 ```
 
 ## Installation (Self-Hosted)
