@@ -1,5 +1,5 @@
 # Use Docker Hardened Image for Node.js 24
-FROM dhi.io/node:20-alpine3.22
+FROM dhi.io/node:25-alpine3.22
 
 ENV NODE_ENV=production
 WORKDIR /home/node/app
