@@ -75,8 +75,9 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      # 6. Cleanup Old Images
-      - name: Clean up old GHCR images
+      # 6. Cleanup Old Images - Main Branch (keep 5)
+      - name: Clean up old GHCR images (main)
+        if: github.ref == 'refs/heads/main'
         uses: quartx-analytics/ghcr-cleaner@v1
         with:
           owner-type: user
@@ -85,3 +86,15 @@ jobs:
           repository-name: dns-service
           delete-untagged: true
           keep-at-most: 5
+
+      # 7. Cleanup Old Images - Dev Branch (keep 2)
+      - name: Clean up old GHCR images (dev)
+        if: github.ref == 'refs/heads/dev'
+        uses: quartx-analytics/ghcr-cleaner@v1
+        with:
+          owner-type: user
+          token: ${{ secrets.PAT_TOKEN }}
+          repository-owner: ${{ github.repository_owner }}
+          repository-name: dns-service
+          delete-untagged: true
+          keep-at-most: 2
