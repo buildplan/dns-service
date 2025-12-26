@@ -13,6 +13,7 @@ A high-performance DNS intelligence API and web service. It provides real-time D
 ## Usage
 
 ### Web Interface
+
 Visit the homepage, [dns.wiredalter.com](https://dns.wiredalter.com) to search for any domain name manually.
 
 ### CLI / API Access
@@ -113,7 +114,7 @@ git clone https://github.com/buildplan/dns-service.git
 cd dns-service
 ```
 
-2. **Run with Docker:**
+**Run with Docker:**
 
 **Option 1: Quick Start**: Default Docker compose file in the repo uses pre-built image from GitHub registry `ghcr.io/buildplan/dns-service:latest`.
 
@@ -123,8 +124,51 @@ docker compose up -d
 
 **Option 2: Build from Source**: To build the image locally, edit `docker-compose.yml` to use `build: .` instead of `image: ...`. This is useful if you want to modify the frontend (e.g., branding, colors, or layout).
 
-1. **Customize the UI (Optional):** You can edit `views/index.html` to change the look and feel of the service before building.
-2. **Edit `docker-compose.yml`:**
+* **Customize the UI (Optional):** You can edit `views/index.html` to change the look and feel of the service before building.
+* **Docker Image Selection:** The `Dockerfile` uses [Docker Hardened Images](https://docs.docker.com/dhi/) for Node.js, which provide enhanced security with minimal CVEs and non-root execution. You have two options:
+
+**Option 1 (Recommended):** Login to `dhi.io` before building:
+
+```bash
+docker login dhi.io
+
+# Use your Docker Hub credentials
+docker compose up -d --build
+```
+
+**Option 2 (Standard Node):** Switch to the official Node image by changing `Dockerfile` to this:
+
+```bash
+# 1. Use the latest Node LTS Alpine image
+FROM node:24-alpine
+
+# 2. Add dumb-init for process management
+RUN apk add --no-cache dumb-init
+
+ENV NODE_ENV=production
+WORKDIR /app
+
+# 3. Optimize permissions
+RUN chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
+# 4. Install Dependencies
+COPY --chown=node:node package.json package-lock.json* ./
+RUN npm ci --only=production && npm cache clean --force
+
+# 5. Copy App Code
+COPY --chown=node:node . .
+
+# 6. Expose Port 5000 (DNS Service)
+EXPOSE 5000
+
+# 7. Start
+CMD ["dumb-init", "node", "server.js"]
+```
+
+**Edit `docker-compose.yml`:**
 
 ```yaml
 services:
