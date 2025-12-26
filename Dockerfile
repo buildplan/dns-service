@@ -2,7 +2,7 @@
 FROM dhi.io/node:20-alpine3.22
 
 ENV NODE_ENV=production
-WORKDIR /app
+WORKDIR /home/node/app
 
 # Install Dependencies
 COPY package.json package-lock.json* ./
