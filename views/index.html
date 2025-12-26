@@ -27,9 +27,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon/android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
     <link rel="manifest" href="/favicon/site.webmanifest">
-    <!---
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%233b82f6'/><text x='40' y='70' font-family='sans-serif' font-size='50' font-weight='bold' fill='white' text-anchor='middle'>DNS</text><circle cx='82' cy='65' r='7' fill='%23ef4444'/></svg>">
-    --->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -42,7 +40,6 @@
         .search-input { background: rgba(15, 23, 42, 0.8); transition: all 0.2s; }
         .search-input:focus { background: rgba(30, 41, 59, 1); border-color: #3b82f6; outline: none; }
 
-        /* Custom Scrollbar for TXT records */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
@@ -61,10 +58,11 @@
     <nav class="absolute top-0 left-0 w-full p-6 flex flex-col md:flex-row justify-between items-center z-10 gap-6 md:gap-4">
         <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
             <div class="text-2xl font-bold tracking-tight text-white">
-                DNS<span class="text-red-500">.</span><span class="text-blue-500">WiredAlter</span>
+                <a href="/">DNS<span class="text-red-500">.</span><span class="text-blue-500">WiredAlter</span></a>
             </div>
 
             <div class="flex gap-1 bg-slate-800/50 rounded-lg p-1 border border-slate-700/50 backdrop-blur-sm">
+                <a href="https://wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">HOME</a>
                 <a href="https://ip.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">IP</a>
                 <a href="#" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
                 <a href="https://whois.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">WHOIS</a>
@@ -74,7 +72,7 @@
         <div class="hidden md:flex gap-4 text-sm text-slate-500 font-medium">
             <a href="/terms" class="hover:text-slate-300 transition-colors">Terms</a>
             <span class="text-slate-700">|</span>
-            <a href="https://github.com/buildplan" class="hover:text-slate-300 transition-colors">GitHub</a>
+            <a href="https://github.com/buildplan/dns-service" class="hover:text-slate-300 transition-colors">GitHub</a>
         </div>
     </nav>
 
