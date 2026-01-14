@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,49 +31,106 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { wired: { dark: '#0b1120', light: '#f8fafc' }}}}}
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
         html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .search-input { background: rgba(15, 23, 42, 0.8); transition: all 0.2s; }
-        .search-input:focus { background: rgba(30, 41, 59, 1); border-color: #3b82f6; outline: none; }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #1e293b; color: #fff; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); font-size: 14px; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        
+        /* --- GLASS PANEL (THEME AWARE) --- */
+        .glass-panel { backdrop-filter: blur(12px); transition: all 0.3s; }
+        
+        html.dark .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+        html:not(.dark) .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(203, 213, 225, 0.6);
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- SEARCH INPUT (THEME AWARE) --- */
+        .search-input { transition: all 0.2s; }
+        
+        html.dark .search-input { 
+            background: rgba(15, 23, 42, 0.8); 
+            border: 1px solid #334155; 
+            color: white; 
+        }
+        html.dark .search-input:focus { 
+            background: rgba(30, 41, 59, 1); 
+            border-color: #3b82f6; 
+            outline: none; 
+        }
+
+        html:not(.dark) .search-input { 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 1px solid #cbd5e1; 
+            color: #0f172a; 
+        }
+        html:not(.dark) .search-input:focus { 
+            background: #ffffff; 
+            border-color: #3b82f6; 
+            outline: none; 
+        }
+
+        /* --- SCROLLBARS --- */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        
+        html.dark .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-track { background: rgba(203, 213, 225, 0.5); }
+        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+
+        /* --- TOAST --- */
+        #toast {
+            visibility: hidden; min-width: 250px; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+        }
+        html.dark #toast { background-color: #1e293b; color: #fff; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+        html:not(.dark) #toast { background-color: #fff; color: #0f172a; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
     </style>
 </head>
-<body class="bg-[#0b1120] text-slate-300 min-h-screen flex flex-col">
+<body class="bg-wired-light dark:bg-wired-dark text-slate-600 dark:text-slate-300 min-h-screen flex flex-col">
 
     <div id="toast">Notification</div>
 
     <nav class="absolute top-0 left-0 w-full p-6 flex flex-col md:flex-row justify-between items-center z-10 gap-6 md:gap-4">
         <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
-            <div class="text-2xl font-bold tracking-tight text-white">
+            <div class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">
                 <a href="/">DNS<span class="text-red-500">.</span><span class="text-blue-500">WiredAlter</span></a>
             </div>
 
-            <div class="flex gap-1 bg-slate-800/50 rounded-lg p-1 border border-slate-700/50 backdrop-blur-sm">
-                <a href="https://www.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">HOME</a>
-                <a href="https://ip.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">IP</a>
+            <div class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-sm transition-colors">
+                <a href="https://www.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">HOME</a>
+                <a href="https://ip.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">IP</a>
                 <a href="#" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
-                <a href="https://whois.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">WHOIS</a>
-                <a href="https://audit.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-400 hover:text-white hover:bg-slate-700 transition-all">AUDIT</a>
+                <a href="https://whois.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">WHOIS</a>
+                <a href="https://audit.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">AUDIT</a>
             </div>
         </div>
 
-        <div class="hidden md:flex gap-4 text-sm text-slate-500 font-medium">
-            <a href="/terms" class="hover:text-slate-300 transition-colors">Terms</a>
-            <span class="text-slate-700">|</span>
-            <a href="https://github.com/buildplan/dns-service" class="hover:text-slate-300 transition-colors">GitHub</a>
+        <div class="absolute top-6 right-6 md:static flex items-center gap-4 text-sm font-medium text-slate-500">
+            
+            <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" aria-label="Toggle Theme">
+                <svg id="icon-sun" class="w-5 h-5 hidden dark:block text-slate-400 hover:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg id="icon-moon" class="w-5 h-5 block dark:hidden text-slate-600 hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+
+            <div class="hidden md:flex items-center gap-4">
+                <div class="w-px h-4 bg-slate-300 dark:bg-slate-700"></div>
+                <a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms</a>
+                <span class="text-slate-300 dark:text-slate-700">|</span>
+                <a href="https://github.com/buildplan/dns-service" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">GitHub</a>
+            </div>
         </div>
     </nav>
 
@@ -81,117 +138,117 @@
 
         <div class="text-center space-y-8 md:space-y-6 max-w-3xl mx-auto">
             <div class="space-y-2">
-                <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tighter">DNS <span class="text-blue-500">Lookup</span></h1>
-                <p class="text-lg md:text-xl text-slate-400">Instant records for A, AAAA, MX, NS, SOA, and TXT.</p>
+                <h1 class="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white tracking-tighter">DNS <span class="text-blue-600 dark:text-blue-500">Lookup</span></h1>
+                <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400">Instant records for A, AAAA, MX, NS, SOA, and TXT.</p>
             </div>
 
             <div class="relative max-w-lg mx-auto mt-6">
-                <input type="text" id="domainInput" class="block w-full p-4 pl-6 text-sm text-white border border-slate-700 rounded-xl search-input placeholder-slate-500 shadow-xl" placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
-                <button onclick="lookup()" class="text-white absolute right-2.5 top-2.5 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all">Check</button>
+                <input type="text" id="domainInput" class="block w-full p-4 pl-6 text-sm rounded-xl search-input placeholder-slate-400 dark:placeholder-slate-500 shadow-xl" placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
+                <button onclick="lookup()" class="text-white absolute right-2.5 top-2.5 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
             </div>
         </div>
 
-        <div id="error-msg" class="hidden max-w-lg mx-auto text-center text-red-400 bg-red-900/10 p-4 rounded-xl border border-red-900/30"></div>
+        <div id="error-msg" class="hidden max-w-lg mx-auto text-center text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/10 p-4 rounded-xl border border-red-200 dark:border-red-900/30"></div>
 
         <div id="results" class="hidden grid-cols-1 md:grid-cols-2 gap-4">
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-blue-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-blue-500"></span> A Records (IPv4)
                 </div>
-                <div id="res-a" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+                <div id="res-a" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-indigo-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-indigo-500"></span> AAAA Records (IPv6)
                 </div>
-                <div id="res-aaaa" class="font-mono text-sm space-y-2 text-white overflow-hidden break-all"></div>
+                <div id="res-aaaa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden break-all"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-purple-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500"></span> Mail Servers (MX)
                 </div>
-                <div id="res-mx" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+                <div id="res-mx" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Nameservers
                 </div>
-                <div id="res-ns" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+                <div id="res-ns" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-cyan-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-cyan-500"></span> Start of Authority (SOA)
                 </div>
-                <div id="res-soa" class="font-mono text-sm space-y-2 text-white overflow-hidden"></div>
+                <div id="res-soa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-orange-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div class="text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-orange-500"></span> TXT Records
                 </div>
-                <div id="res-txt" class="font-mono text-xs text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+                <div id="res-txt" class="font-mono text-xs text-slate-600 dark:text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-8 border-t border-slate-800/60">
-        <div class="space-y-4">
-        <h3 class="text-lg font-bold text-white">CLI Access</h3>
-        <div class="bg-[#0f172a] rounded-xl p-5 font-mono text-sm border border-slate-800 space-y-6">
-            <div>
-                <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">Text Report</div>
-                <div class="group cursor-pointer" onclick="copyText('cmd1')">
-                    <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
-                        <code id="cmd1" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
-                            $ curl https://dns.wiredalter.com/google.com
-                        </code>
-                        <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-8 border-t border-slate-200 dark:border-slate-800/60">
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">CLI Access</h3>
+                <div class="bg-[#0f172a] rounded-xl p-5 font-mono text-sm border border-slate-800 space-y-6 shadow-lg">
+                    <div>
+                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">Text Report</div>
+                        <div class="group cursor-pointer" onclick="copyText('cmd1')">
+                            <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
+                                <code id="cmd1" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
+                                    $ curl https://dns.wiredalter.com/google.com
+                                </code>
+                                <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">JSON Data</div>
+                        <div class="group cursor-pointer" onclick="copyText('cmd2')">
+                            <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
+                                <code id="cmd2" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
+                                    $ curl https://dns.wiredalter.com/api/lookup/google.com
+                                </code>
+                                <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">JSON Data</div>
-                <div class="group cursor-pointer" onclick="copyText('cmd2')">
-                    <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
-                        <code id="cmd2" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
-                            $ curl https://dns.wiredalter.com/api/lookup/google.com
-                        </code>
-                        <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
 
             <div class="space-y-6 text-sm">
                 <div class="space-y-1">
-                    <h4 class="font-bold text-blue-400">What is this?</h4>
-                    <p class="text-slate-400">A free tool to check DNS propagation and record details directly from our servers.</p>
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400">What is this?</h4>
+                    <p class="text-slate-600 dark:text-slate-400">A free tool to check DNS propagation and record details directly from our servers.</p>
                 </div>
                 <div class="space-y-1">
-                    <h4 class="font-bold text-blue-400">Does it cache results?</h4>
-                    <p class="text-slate-400">We respect the TTL (Time To Live) of the records, but our lookups are performed in real-time.</p>
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400">Does it cache results?</h4>
+                    <p class="text-slate-600 dark:text-slate-400">We respect the TTL (Time To Live) of the records, but our lookups are performed in real-time.</p>
                 </div>
                 <div class="space-y-1">
-                    <h4 class="font-bold text-blue-400">API Usage?</h4>
-                    <p class="text-slate-400">You can use <code>/api/lookup/domain.com</code> to get a JSON response for your applications.</p>
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400">API Usage?</h4>
+                    <p class="text-slate-600 dark:text-slate-400">You can use <code>/api/lookup/domain.com</code> to get a JSON response for your applications.</p>
                 </div>
             </div>
         </div>
 
         <section class="max-w-3xl mx-auto px-4 pb-16">
-            <div class="bg-slate-900/50 border border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm">
+            <div class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm shadow-sm">
                 <div class="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-white mb-2">Fully Open Source</h3>
-                <p class="text-slate-400 mb-6 max-w-lg mx-auto">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Fully Open Source</h3>
+                <p class="text-slate-600 dark:text-slate-400 mb-6 max-w-lg mx-auto">
                     For full transparency, this service runs entirely in memory and logs nothing.
                     Inspect the code, audit the security, or host it yourself.
                 </p>
@@ -206,14 +263,35 @@
 
     </main>
 
-    <footer class="border-t border-slate-800/60 bg-[#0b1120] py-8 text-center text-slate-600 text-sm">
-    <p><a href="/terms" class="hover:text-slate-300 transition-colors">Terms & Privacy</a></p>
+    <footer class="border-t border-slate-200 dark:border-slate-800/60 bg-white dark:bg-[#0b1120] py-8 text-center text-slate-600 dark:text-slate-600 text-sm">
+        <p><a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms & Privacy</a></p>
         <p>&copy; <span id="year"></span> WiredAlter DNS Service. Powered by
-            <a href="https://nodejs.org" target="_blank" class="hover:text-slate-500 underline decoration-slate-800">Node.js</a>.</p>
+            <a href="https://nodejs.org" target="_blank" class="hover:text-slate-900 dark:hover:text-slate-500 underline decoration-slate-400 dark:decoration-slate-800">Node.js</a>.</p>
     </footer>
 
     <script>
         document.getElementById("year").innerText = new Date().getFullYear();
+
+        // --- THEME LOGIC ---
+        function initTheme() {
+            if (localStorage.theme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+        }
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+        initTheme();
 
         function showToast(message) {
             const x = document.getElementById("toast");
@@ -242,11 +320,11 @@
                 const render = (id, list, mapFn) => {
                     const el = document.getElementById(id);
                     if (!list || list.length === 0) {
-                        el.innerHTML = '<span class="text-slate-600 italic">No records found</span>';
+                        el.innerHTML = '<span class="text-slate-500 italic">No records found</span>';
                         return;
                     }
                     el.innerHTML = list.map(item =>
-                        `<div class="border-b border-slate-800/50 last:border-0 pb-1 last:pb-0">${mapFn ? mapFn(item) : item}</div>`
+                        `<div class="border-b border-slate-200 dark:border-slate-800/50 last:border-0 pb-1 last:pb-0">${mapFn ? mapFn(item) : item}</div>`
                     ).join('');
                 };
 
@@ -255,7 +333,7 @@
                 render('res-aaaa', data.records.AAAA);
                 render('res-mx', data.records.MX, m => `<span class="text-slate-500 mr-2 font-bold w-6 inline-block">${m.priority}</span> ${m.exchange}`);
                 render('res-ns', data.records.NS);
-                render('res-txt', data.records.TXT, t => `<div class="p-2 bg-slate-800/50 rounded break-all font-mono text-xs text-slate-400 mb-1">${t}</div>`);
+                render('res-txt', data.records.TXT, t => `<div class="p-2 bg-slate-100 dark:bg-slate-800/50 rounded break-all font-mono text-xs text-slate-600 dark:text-slate-400 mb-1 border border-slate-200 dark:border-slate-700/50">${t}</div>`);
 
                 // Render SOA (Object, not Array)
                 const soaEl = document.getElementById('res-soa');
@@ -270,7 +348,7 @@
                         </div>
                     `;
                 } else {
-                    soaEl.innerHTML = '<span class="text-slate-600 italic">No SOA record found</span>';
+                    soaEl.innerHTML = '<span class="text-slate-500 italic">No SOA record found</span>';
                 }
 
                 document.getElementById('results').classList.remove('hidden');
