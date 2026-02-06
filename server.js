@@ -4,6 +4,8 @@ const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 
+dns.setServers(['1.1.1.1', "9.9.9.9", "208.67.222.222", "8.8.8.8"]);
+
 const app = express();
 
 // --- CONFIGURATION ---
@@ -15,7 +17,7 @@ app.disable('x-powered-by');
 app.use(express.static(path.join(__dirname, 'views'), { index: false }));
 
 // --- HELPERS ---
-const isValidDomain = (d) => /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(d);
+const isValidDomain = (d) => { if (!d || d.length > 253) return false; return /^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)(?:\.[a-zA-Z0-9-]{1,63})+$/.test(d); };
 
 function isCli(userAgent) {
     const ua = (userAgent || '').toLowerCase();
