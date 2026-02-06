@@ -4,18 +4,25 @@ const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 
+// Upstream Resolvers
+dns.setServers(['1.1.1.1', "9.9.9.9", "208.67.222.222", "8.8.8.8"]);
+
 const app = express();
 
 // --- CONFIGURATION ---
 app.set('json spaces', 2); // Pretty print JSON by default
-app.set('trust proxy', 1); // Security: Trust only the immediate proxy (Nginx)
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
+app.use(cors());
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'views'), { index: false }));
 
 // --- HELPERS ---
-const isValidDomain = (d) => /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(d);
+const isValidDomain = (d) => {
+    if (!d || d.length > 253) return false;
+    return /^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)(?:\.[a-zA-Z0-9-]{1,63})+$/.test(d);
+};
 
 function isCli(userAgent) {
     const ua = (userAgent || '').toLowerCase();
@@ -23,27 +30,35 @@ function isCli(userAgent) {
            ua.includes('python') || ua.includes('powershell') || ua.includes('aiohttp') || ua.includes('go-http-client');
 }
 
+// Timeout Wrapper for DNS Calls
+const withTimeout = (promise, ms = 3000) => {
+    let timeoutId;
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Timeout')), ms);
+    });
+    return Promise.race([promise, timeoutPromise])
+        .finally(() => clearTimeout(timeoutId));
+};
+
 // --- RATE LIMITER ---
 const globalLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
-    validate: { trustProxy: false }, // Disable the warning
+    validate: { trustProxy: false },
     message: { error: "Too many requests. Please try again later." }
 });
 app.use(globalLimiter);
 
 // --- ROUTES ---
 
-// 1. Terms Page (Must be before wildcard)
-app.get('/terms', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'terms.html'));
-});
+app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'views', 'terms.html')));
 
 // 2. API Endpoint (JSON)
 app.get('/api/lookup/:domain', async (req, res) => {
-    const domain = req.params.domain;
+    // Sanitize immediately
+    const domain = (req.params.domain || '').trim().toLowerCase();
     const ua = req.headers['user-agent'];
 
     if (!isValidDomain(domain)) {
@@ -54,16 +69,19 @@ app.get('/api/lookup/:domain', async (req, res) => {
         const start = Date.now();
 
         // Run lookups in parallel
-        const [a, aaaa, mx, txt, ns, soa] = await Promise.allSettled([
-            dns.resolve4(domain),
-            dns.resolve6(domain),
-            dns.resolveMx(domain),
-            dns.resolveTxt(domain),
-            dns.resolveNs(domain),
-            dns.resolveSoa(domain)
+        const [a, aaaa, mx, txt, ns, soa, cname, caa] = await Promise.allSettled([
+            withTimeout(dns.resolve4(domain)),
+            withTimeout(dns.resolve6(domain)),
+            withTimeout(dns.resolveMx(domain)),
+            withTimeout(dns.resolveTxt(domain)),
+            withTimeout(dns.resolveNs(domain)),
+            withTimeout(dns.resolveSoa(domain)),
+            withTimeout(dns.resolveCname(domain)),
+            withTimeout(dns.resolveCaa(domain))
         ]);
 
         const getVal = (result) => result.status === 'fulfilled' ? result.value : [];
+        const getSingle = (result) => result.status === 'fulfilled' ? (Array.isArray(result.value) ? result.value[0] : result.value) : null;
 
         const data = {
             domain: domain,
@@ -75,10 +93,11 @@ app.get('/api/lookup/:domain', async (req, res) => {
                 MX: getVal(mx),
                 TXT: getVal(txt).flat(),
                 NS: getVal(ns),
-                SOA: getVal(soa) || null
+                SOA: getVal(soa) || null,
+                CNAME: getSingle(cname),
+                CAA: getVal(caa)
             }
         };
-
         // If CLI, send stringified JSON
         if (isCli(ua)) {
             res.header('Content-Type', 'application/json');
@@ -89,7 +108,7 @@ app.get('/api/lookup/:domain', async (req, res) => {
         res.json(data);
 
     } catch (error) {
-        // [FIX] Handle errors for CLI nicely too
+        // Handle errors for CLI
         const errData = { error: "Lookup failed or domain not found" };
         if (isCli(ua)) {
              res.status(500).header('Content-Type', 'application/json');
@@ -99,22 +118,19 @@ app.get('/api/lookup/:domain', async (req, res) => {
     }
 });
 
-// 3. CLI Text Report (curl dns.wiredalter.com/google.com)
+// 3. CLI Text Report
 app.get('/:domain', async (req, res, next) => {
-    // Skip internal files
     if (!req.params.domain.includes('.')) return next();
 
     const ua = req.headers['user-agent'];
-
-    // Only intercept CLI tools for the text report
     if (isCli(ua)) {
-        const domain = req.params.domain;
+        const domain = req.params.domain.trim().toLowerCase();
         try {
             const [a, mx, ns, txt] = await Promise.allSettled([
-                dns.resolve4(domain),
-                dns.resolveMx(domain),
-                dns.resolveNs(domain),
-                dns.resolveTxt(domain)
+                withTimeout(dns.resolve4(domain)),
+                withTimeout(dns.resolveMx(domain)),
+                withTimeout(dns.resolveNs(domain)),
+                withTimeout(dns.resolveTxt(domain))
             ]);
 
             const getStr = (r) => r.status === 'fulfilled' ? r.value : [];
@@ -124,7 +140,7 @@ app.get('/:domain', async (req, res, next) => {
             output += `A Records   : ${getStr(a).join(', ') || '-'}\n`;
             output += `MX Records  : ${getStr(mx).map(m => `${m.exchange} (${m.priority})`).join(', ') || '-'}\n`;
             output += `Nameservers : ${getStr(ns).join(', ') || '-'}\n`;
-	    output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${domain} for full list)\n`;
+            output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${domain} for full list)\n`;
             output += `------------------------------------------------\n`;
 
             return res.send(output);
