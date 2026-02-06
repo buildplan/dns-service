@@ -148,6 +148,18 @@
             </div>
         </div>
 
+        <div id="my-connection" class="hidden text-center mb-6 px-4">
+            <span class="inline-flex flex-wrap justify-center items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-mono border border-blue-200 dark:border-blue-800 max-w-full">
+                <span class="relative flex h-2 w-2 shrink-0">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                <span class="whitespace-nowrap">You are connecting from:</span>
+                <span id="my-ip" class="font-bold break-all">...</span>  
+                <span id="my-flag" class="shrink-0 text-lg ml-1"></span>
+            </span>
+        </div>
+
         <div id="error-msg" class="hidden max-w-lg mx-auto text-center text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/10 p-4 rounded-xl border border-red-200 dark:border-red-900/30"></div>
 
         <div id="results" class="hidden grid-cols-1 md:grid-cols-2 gap-4">
@@ -192,6 +204,20 @@
                     <span class="w-2 h-2 rounded-full bg-orange-500"></span> TXT Records
                 </div>
                 <div id="res-txt" class="font-mono text-xs text-slate-600 dark:text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <div id="card-cname" class="glass-panel p-5 md:p-6 rounded-xl space-y-3 hidden">
+                <div class="text-pink-600 dark:text-pink-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-pink-500"></span> CNAME (Alias)
+                </div>
+                <div id="res-cname" class="font-mono text-sm text-slate-800 dark:text-white overflow-hidden break-all"></div>
+            </div>
+
+            <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
+                <div class="text-teal-600 dark:text-teal-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-teal-500"></span> CAA (SSL Security)
+                </div>
+                <div id="res-caa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
             </div>
         </div>
 
@@ -347,6 +373,21 @@
                 render('res-ns', data.records.NS);
                 render('res-txt', data.records.TXT, t => `<div class="p-2 bg-slate-100 dark:bg-slate-800/50 rounded break-all font-mono text-xs text-slate-600 dark:text-slate-400 mb-1 border border-slate-200 dark:border-slate-700/50">${t}</div>`);
 
+                // Render CNAME
+                const cnameEl = document.getElementById('res-cname');
+                const cnameCard = document.getElementById('card-cname');
+                if (data.records.CNAME) {
+                    cnameEl.innerText = data.records.CNAME;
+                    cnameCard.classList.remove('hidden');
+                } else {
+                    cnameCard.classList.add('hidden');
+                }
+
+                // Render CAA
+                render('res-caa', data.records.CAA, c => 
+                    `<span class="text-slate-500 mr-2 font-bold">${c.issue || c.issuewild || 'iodef'}</span> "${c.value}"`
+                );
+
                 // Render SOA (Object, not Array)
                 const soaEl = document.getElementById('res-soa');
                 if (data.records.SOA) {
@@ -372,6 +413,45 @@
                 errDiv.classList.remove('hidden');
             }
         }
+
+        // --- Typewriter & IP Logic ---
+        function startPlaceholderAnimation() {
+            const input = document.getElementById('domainInput');
+            const phrases = [ "Lookup a Domain: e.g. wiredalter.com", "Check DNS: e.g. google.com" ];
+            let phraseIndex = 0; let charIndex = 0; let isDeleting = false;
+            
+            function typeLoop() {
+                if (input.value) { setTimeout(typeLoop, 2000); return; }
+                const currentPhrase = phrases[phraseIndex];
+                input.placeholder = currentPhrase.substring(0, charIndex);
+                
+                let typeSpeed = 50; 
+                if (isDeleting) { typeSpeed = 25; charIndex--; } else { charIndex++; }
+                
+                if (!isDeleting && charIndex === currentPhrase.length + 1) { typeSpeed = 2000; isDeleting = true; }
+                else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500; }
+                
+                setTimeout(typeLoop, typeSpeed);
+            }
+            typeLoop();
+        }
+
+        fetch('https://ip.wiredalter.com/api/info')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('my-ip').innerText = data.ip;
+                document.getElementById('my-flag').innerText = getFlagEmoji(data.country_code || 'XX'); 
+                document.getElementById('my-connection').classList.remove('hidden');
+                startPlaceholderAnimation();
+            })
+            .catch(() => startPlaceholderAnimation());
+
+        function getFlagEmoji(countryCode) {
+            if (!countryCode || countryCode.length !== 2) return '';
+            const codePoints = countryCode.toUpperCase().split('').map(char =>  127397 + char.charCodeAt());
+            return String.fromCodePoint(...codePoints);
+        }
+
     </script>
 </body>
 </html>
