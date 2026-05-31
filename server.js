@@ -3,7 +3,6 @@ const dns = require('dns').promises;
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const escapeHtml = require('escape-html');
 
 // Upstream Resolvers
 dns.setServers(['1.1.1.1', "9.9.9.9", "208.67.222.222", "8.8.8.8"]);
@@ -20,6 +19,15 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'views'), { index: false }));
 
 // --- HELPERS ---
+const escapeHtml = (unsafe) => {
+    return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
 const isValidDomain = (d) => {
     if (!d || d.length > 253) return false;
     return /^(?!-)[a-zA-Z0-9-]{1,63}(?<!-)(?:\.[a-zA-Z0-9-]{1,63})+$/.test(d);
