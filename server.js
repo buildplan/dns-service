@@ -3,6 +3,7 @@ const dns = require('dns').promises;
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const escapeHtml = require('escape-html');
 
 // Upstream Resolvers
 dns.setServers(['1.1.1.1', "9.9.9.9", "208.67.222.222", "8.8.8.8"]);
@@ -145,7 +146,7 @@ app.get('/:domain', async (req, res, next) => {
 
             return res.send(output);
         } catch (e) {
-            return res.send(`Error resolving ${domain}\n`);
+            return res.send(`Error resolving ${escapeHtml(domain)}\n`);
         }
     }
     next();
