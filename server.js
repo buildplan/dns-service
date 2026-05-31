@@ -126,6 +126,7 @@ app.get('/:domain', async (req, res, next) => {
     const ua = req.headers['user-agent'];
     if (isCli(ua)) {
         const domain = req.params.domain.trim().toLowerCase();
+        const safeDomain = escapeHtml(domain);
         try {
             const [a, mx, ns, txt] = await Promise.allSettled([
                 withTimeout(dns.resolve4(domain)),
@@ -136,17 +137,17 @@ app.get('/:domain', async (req, res, next) => {
 
             const getStr = (r) => r.status === 'fulfilled' ? r.value : [];
 
-            let output = `\n🔎 DNS Report: ${domain}\n`;
+            let output = `\n🔎 DNS Report: ${safeDomain}\n`;
             output += `------------------------------------------------\n`;
             output += `A Records   : ${getStr(a).join(', ') || '-'}\n`;
             output += `MX Records  : ${getStr(mx).map(m => `${m.exchange} (${m.priority})`).join(', ') || '-'}\n`;
             output += `Nameservers : ${getStr(ns).join(', ') || '-'}\n`;
-            output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${domain} for full list)\n`;
+            output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${safeDomain} for full list)\n`;
             output += `------------------------------------------------\n`;
 
             return res.send(output);
         } catch (e) {
-            return res.send(`Error resolving ${escapeHtml(domain)}\n`);
+            return res.send(`Error resolving ${safeDomain}\n`);
         }
     }
     next();
