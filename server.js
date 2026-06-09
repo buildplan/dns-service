@@ -3,6 +3,7 @@ const dns = require('dns').promises;
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const { LRUCache } = require('lru-cache');
 
 // Upstream Resolvers
 dns.setServers(['1.1.1.1', "9.9.9.9", "208.67.222.222", "8.8.8.8"]);
@@ -11,9 +12,19 @@ const app = express();
 
 // --- CONFIGURATION ---
 app.set('json spaces', 2); // Pretty print JSON by default
-app.set('trust proxy', 1);
+
+// Set trust proxy count via environment variable, defaulting to 1
+const trustProxyCount = process.env.TRUST_PROXY ? parseInt(process.env.TRUST_PROXY, 10) : 1;
+app.set('trust proxy', trustProxyCount);
+
 app.disable('x-powered-by');
 app.use(cors());
+
+// Configure LRU Cache for DNS lookups
+const dnsCache = new LRUCache({
+    max: 5000,           // Store up to 5000 domain responses
+    ttl: 1000 * 60 * 1,  // 1 minute TTL
+});
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'views'), { index: false }));
@@ -36,7 +47,7 @@ const isValidDomain = (d) => {
 function isCli(userAgent) {
     const ua = (userAgent || '').toLowerCase();
     return ua.includes('curl') || ua.includes('wget') || ua.includes('httpie') ||
-           ua.includes('python') || ua.includes('powershell') || ua.includes('aiohttp') || ua.includes('go-http-client');
+        ua.includes('python') || ua.includes('powershell') || ua.includes('aiohttp') || ua.includes('go-http-client');
 }
 
 // Timeout Wrapper for DNS Calls
@@ -75,6 +86,16 @@ app.get('/api/lookup/:domain', async (req, res) => {
     }
 
     try {
+        const cacheKey = `api_${domain}`;
+        if (dnsCache.has(cacheKey)) {
+            const cachedData = dnsCache.get(cacheKey);
+            if (isCli(ua)) {
+                res.header('Content-Type', 'application/json');
+                return res.send(JSON.stringify(cachedData, null, 2) + '\n');
+            }
+            return res.json(cachedData);
+        }
+
         const start = Date.now();
 
         // Run lookups in parallel
@@ -107,6 +128,10 @@ app.get('/api/lookup/:domain', async (req, res) => {
                 CAA: getVal(caa)
             }
         };
+
+        // Save to cache
+        dnsCache.set(cacheKey, data);
+
         // If CLI, send stringified JSON
         if (isCli(ua)) {
             res.header('Content-Type', 'application/json');
@@ -120,8 +145,8 @@ app.get('/api/lookup/:domain', async (req, res) => {
         // Handle errors for CLI
         const errData = { error: "Lookup failed or domain not found" };
         if (isCli(ua)) {
-             res.status(500).header('Content-Type', 'application/json');
-             return res.send(JSON.stringify(errData, null, 2) + '\n');
+            res.status(500).header('Content-Type', 'application/json');
+            return res.send(JSON.stringify(errData, null, 2) + '\n');
         }
         res.status(500).json(errData);
     }
@@ -136,6 +161,11 @@ app.get('/:domain', async (req, res, next) => {
         const domain = req.params.domain.trim().toLowerCase();
         const safeDomain = escapeHtml(domain);
         try {
+            const cacheKey = `cli_${domain}`;
+            if (dnsCache.has(cacheKey)) {
+                return res.send(dnsCache.get(cacheKey));
+            }
+
             const [a, mx, ns, txt] = await Promise.allSettled([
                 withTimeout(dns.resolve4(domain)),
                 withTimeout(dns.resolveMx(domain)),
@@ -153,6 +183,7 @@ app.get('/:domain', async (req, res, next) => {
             output += `TXT Records : ${getStr(txt).flat().length} found (use /api/lookup/${safeDomain} for full list)\n`;
             output += `------------------------------------------------\n`;
 
+            dnsCache.set(cacheKey, output);
             return res.send(output);
         } catch (e) {
             return res.send(`Error resolving ${safeDomain}\n`);
