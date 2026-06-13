@@ -85,7 +85,7 @@ const PROPAGATION_SERVERS = [
     { id: 'opendns-alt', name: 'OpenDNS (ZA)', location: 'Cape Town, ZA', country: 'ZA', lat: -33.9249, lng: 18.4241, ip: '208.67.220.220' },
     { id: 'quad9', name: 'Quad9', location: 'Frankfurt, DE', country: 'DE', lat: 50.1109, lng: 8.6821, ip: '9.9.9.9' },
     { id: 'quad9-alt', name: 'Quad9 (BR)', location: 'São Paulo, BR', country: 'BR', lat: -23.5505, lng: -46.6333, ip: '149.112.112.112' },
-    { id: 'yandex', name: 'Yandex', location: 'Moscow, RU', country: 'RU', lat: 55.7558, lng: 37.6173, ip: '77.88.8.8' },
+    { id: 'cloudflare-ru', name: 'Cloudflare (RU)', location: 'Moscow, RU', country: 'RU', lat: 55.7558, lng: 37.6173, ip: '1.0.0.3' },
     { id: '114dns', name: '114DNS', location: 'Nanjing, CN', country: 'CN', lat: 32.0603, lng: 118.7969, ip: '114.114.114.114' },
     { id: 'adguard', name: 'AdGuard (UK)', location: 'London, UK', country: 'GB', lat: 51.5074, lng: -0.1278, ip: '94.140.14.14' },
     { id: 'adguard-alt', name: 'AdGuard (CL)', location: 'Santiago, CL', country: 'CL', lat: -33.4489, lng: -70.6693, ip: '94.140.15.15' },
