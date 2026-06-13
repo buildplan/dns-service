@@ -697,21 +697,26 @@
             if (map) return;
             map = L.map('mapContainer').setView([20, 0], 2);
 
-            // Determine tile layer based on theme
-            const isDark = document.documentElement.classList.contains('dark');
-            const tileUrl = isDark
-                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
             L.tileLayer(tileUrl, {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 20
+                attribution: '&copy; OpenStreetMap contributors',
+                subdomains: 'abc',
+                maxZoom: 19
             }).addTo(map);
 
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('mapContainer').style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+            } else {
+                document.getElementById('mapContainer').style.filter = 'none';
+            }
+
             // Fetch servers and plot initially
-            fetch('/api/propagation-servers')
-                .then(res => res.json())
+            fetch('/api/propagation-servers?t=' + Date.now())
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to load servers (HTTP ' + res.status + ')');
+                    return res.json();
+                })
                 .then(servers => {
                     serversList = servers;
                     servers.forEach(s => {
@@ -726,26 +731,20 @@
                         marker.bindPopup(`<b>${s.name}</b><br>${s.location}`);
                         markers[s.id] = marker;
                     });
+                })
+                .catch(err => {
+                    console.error('Servers fetch error:', err);
+                    document.getElementById('propResults').innerHTML = `<div class="text-center text-red-500 mt-10 p-4 bg-red-500/10 rounded-xl border border-red-500/20"><b>Error Loading Map Nodes</b><br>Could not load the global servers. Make sure the backend is fully deployed and try refreshing without cache.</div>`;
                 });
         }
 
         function updateMapTheme() {
             if (!map) return;
-            const isDark = document.documentElement.classList.contains('dark');
-            const tileUrl = isDark
-                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-
-            map.eachLayer(layer => {
-                if (layer instanceof L.TileLayer) {
-                    map.removeLayer(layer);
-                }
-            });
-            L.tileLayer(tileUrl, {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd',
-                maxZoom: 20
-            }).addTo(map);
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('mapContainer').style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+            } else {
+                document.getElementById('mapContainer').style.filter = 'none';
+            }
         }
 
         // Hook into toggleTheme to update map
