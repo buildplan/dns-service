@@ -695,14 +695,23 @@
 
         function initMap() {
             if (map) return;
-            map = L.map('mapContainer').setView([20, 0], 2);
+
+            const worldBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
+
+            map = L.map('mapContainer', {
+                maxBounds: worldBounds,
+                maxBoundsViscosity: 1.0,
+                minZoom: 1.5,
+                worldCopyJump: true
+            }).setView([20, 0], 2);
 
             const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
             L.tileLayer(tileUrl, {
                 attribution: '&copy; OpenStreetMap contributors',
                 subdomains: 'abc',
-                maxZoom: 19
+                maxZoom: 19,
+                noWrap: false
             }).addTo(map);
 
             if (document.documentElement.classList.contains('dark')) {
