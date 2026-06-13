@@ -27,8 +27,8 @@ COPY --from=builder --chown=node:node /usr/src/app /app
 
 WORKDIR /app
 
-# Expose Port 5000 (DNS Service)
-EXPOSE 5000
+# Expose Port 5050 (DNS Service)
+EXPOSE 5050
 
 # Start with dumb-init for proper signal handling
 CMD ["dumb-init", "node", "server.js"]

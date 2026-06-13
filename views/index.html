@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>WiredAlter DNS Lookup</title>
-    <meta name="description" content="Free DNS lookup tool. Check A, AAAA, MX, NS, SOA, and TXT records instantly via browser or CLI.">
-    <meta name="keywords" content="dns lookup, ipv6 check, soa record, mx record, txt lookup, developer api, wiredalter">
+    <meta name="description"
+        content="Free DNS lookup tool. Check A, AAAA, MX, NS, SOA, and TXT records instantly via browser or CLI.">
+    <meta name="keywords"
+        content="dns lookup, ipv6 check, soa record, mx record, txt lookup, developer api, wiredalter">
     <meta name="author" content="WiredAlter">
     <link rel="canonical" href="https://dns.wiredalter.com/">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://dns.wiredalter.com/">
     <meta property="og:title" content="WiredAlter DNS - Professional Lookup Tool">
-    <meta property="og:description" content="Instant DNS record checks including IPv6 and SOA. Browser and CLI supported.">
-    
+    <meta property="og:description"
+        content="Instant DNS record checks including IPv6 and SOA. Browser and CLI supported.">
+
     <meta property="og:image" content="https://dns.wiredalter.com/preview-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://dns.wiredalter.com/preview-image.png">
@@ -30,24 +34,36 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { wired: { dark: '#0b1120', light: '#f8fafc' }}}}}
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { wired: { dark: '#0b1120', light: '#f8fafc' } } } } }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
-        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
         /* --- GLASS PANEL (THEME AWARE) --- */
-        .glass-panel { backdrop-filter: blur(12px); transition: all 0.3s; }
-        
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            transition: all 0.3s;
+        }
+
         html.dark .glass-panel {
             background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
         html:not(.dark) .glass-panel {
             background: rgba(255, 255, 255, 0.85);
             border: 1px solid rgba(203, 213, 225, 0.6);
@@ -55,81 +71,152 @@
         }
 
         /* --- SEARCH INPUT (THEME AWARE) --- */
-        .search-input { transition: all 0.2s; }
-        
-        html.dark .search-input { 
-            background: rgba(15, 23, 42, 0.8); 
-            border: 1px solid #334155; 
-            color: white; 
-        }
-        html.dark .search-input:focus { 
-            background: rgba(30, 41, 59, 1); 
-            border-color: #3b82f6; 
-            outline: none; 
+        .search-input {
+            transition: all 0.2s;
         }
 
-        html:not(.dark) .search-input { 
-            background: rgba(255, 255, 255, 0.9); 
-            border: 1px solid #cbd5e1; 
-            color: #0f172a; 
+        html.dark .search-input {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid #334155;
+            color: white;
         }
-        html:not(.dark) .search-input:focus { 
-            background: #ffffff; 
-            border-color: #3b82f6; 
-            outline: none; 
+
+        html.dark .search-input:focus {
+            background: rgba(30, 41, 59, 1);
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        html:not(.dark) .search-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+        }
+
+        html:not(.dark) .search-input:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            outline: none;
         }
 
         /* --- SCROLLBARS --- */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        
-        html.dark .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
 
-        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-track { background: rgba(203, 213, 225, 0.5); }
-        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        html.dark .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(203, 213, 225, 0.5);
+        }
+
+        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
 
         /* --- TOAST --- */
         #toast {
-            visibility: hidden; min-width: 250px; text-align: center; border-radius: 8px; padding: 12px 16px; position: fixed; z-index: 100; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+            visibility: hidden;
+            min-width: 250px;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
         }
-        html.dark #toast { background-color: #1e293b; color: #fff; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
-        html:not(.dark) #toast { background-color: #fff; color: #0f172a; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        
-        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+        html.dark #toast {
+            background-color: #1e293b;
+            color: #fff;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        html:not(.dark) #toast {
+            background-color: #fff;
+            color: #0f172a;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
     </style>
 </head>
+
 <body class="bg-wired-light dark:bg-wired-dark text-slate-600 dark:text-slate-300 min-h-screen flex flex-col">
 
     <div id="toast">Notification</div>
 
-    <nav class="absolute top-0 left-0 w-full p-6 flex flex-col md:flex-row justify-between items-center z-10 gap-6 md:gap-4">
+    <nav
+        class="absolute top-0 left-0 w-full p-6 flex flex-col md:flex-row justify-between items-center z-10 gap-6 md:gap-4">
         <div class="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto">
             <div class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white">
                 <a href="/">DNS<span class="text-red-500">.</span><span class="text-blue-500">WiredAlter</span></a>
             </div>
 
-            <div class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-sm transition-colors">
-                <a href="https://www.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">HOME</a>
-                <a href="https://ip.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">IP</a>
-                <a href="#" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
-                <a href="https://whois.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">WHOIS</a>
-                <a href="https://audit.wiredalter.com" class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">AUDIT</a>
+            <div
+                class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-sm transition-colors">
+                <a href="https://www.wiredalter.com"
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">HOME</a>
+                <a href="https://ip.wiredalter.com"
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">IP</a>
+                <a href="#"
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
+                <a href="https://whois.wiredalter.com"
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">WHOIS</a>
+                <a href="https://audit.wiredalter.com"
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">AUDIT</a>
             </div>
         </div>
 
         <div class="absolute top-6 right-6 md:static flex items-center gap-4 text-sm font-medium text-slate-500">
-            
-            <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-all" aria-label="Toggle Theme">
-                <svg id="icon-sun" class="w-5 h-5 hidden dark:block text-slate-400 hover:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-5 h-5 block dark:hidden text-slate-600 hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+
+            <button onclick="toggleTheme()"
+                class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
+                aria-label="Toggle Theme">
+                <svg id="icon-sun" class="w-5 h-5 hidden dark:block text-slate-400 hover:text-yellow-400" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+                <svg id="icon-moon" class="w-5 h-5 block dark:hidden text-slate-600 hover:text-blue-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                    </path>
+                </svg>
             </button>
 
             <div class="hidden md:flex items-center gap-4">
                 <div class="w-px h-4 bg-slate-300 dark:bg-slate-700"></div>
                 <a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms</a>
                 <span class="text-slate-300 dark:text-slate-700">|</span>
-                <a href="https://github.com/buildplan/dns-service" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">GitHub</a>
+                <a href="https://github.com/buildplan/dns-service"
+                    class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">GitHub</a>
             </div>
         </div>
     </nav>
@@ -138,86 +225,147 @@
 
         <div class="text-center space-y-8 md:space-y-6 max-w-3xl mx-auto">
             <div class="space-y-2">
-                <h1 class="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white tracking-tighter">DNS <span class="text-blue-600 dark:text-blue-500">Lookup</span></h1>
-                <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400">Instant records for A, AAAA, MX, NS, SOA, and TXT.</p>
+                <h1 class="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white tracking-tighter">DNS <span
+                        class="text-blue-600 dark:text-blue-500">Lookup</span></h1>
+                <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400">Instant records for A, AAAA, MX, NS,
+                    SOA, and TXT.</p>
             </div>
 
             <div class="relative max-w-lg mx-auto mt-6">
-                <input type="text" id="domainInput" class="block w-full p-4 pl-6 text-sm rounded-xl search-input placeholder-slate-400 dark:placeholder-slate-500 shadow-xl" placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
-                <button onclick="lookup()" class="text-white absolute right-2.5 top-2.5 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
+                <input type="text" id="domainInput"
+                    class="block w-full p-4 pl-6 text-sm rounded-xl search-input placeholder-slate-400 dark:placeholder-slate-500 shadow-xl"
+                    placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
+                <div class="absolute right-2.5 top-2.5 flex gap-2">
+                    <button onclick="openPropagationModal()"
+                        class="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-slate-300 dark:focus:ring-slate-800 font-medium rounded-lg text-sm px-3 py-2 transition-all shadow border border-slate-300 dark:border-slate-700"
+                        title="Global Propagation Checker">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button onclick="lookup()"
+                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
+                </div>
             </div>
         </div>
 
         <div id="my-connection" class="hidden text-center mb-6 px-4">
-            <span class="inline-flex flex-wrap justify-center items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-mono border border-blue-200 dark:border-blue-800 max-w-full">
+            <span
+                class="inline-flex flex-wrap justify-center items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-mono border border-blue-200 dark:border-blue-800 max-w-full">
                 <span class="relative flex h-2 w-2 shrink-0">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </span>
                 <span class="whitespace-nowrap">You are connecting from:</span>
-                <span id="my-ip" class="font-bold break-all">...</span>  
+                <span id="my-ip" class="font-bold break-all">...</span>
                 <span id="my-flag" class="shrink-0 text-lg ml-1"></span>
             </span>
         </div>
 
-        <div id="error-msg" class="hidden max-w-lg mx-auto text-center text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/10 p-4 rounded-xl border border-red-200 dark:border-red-900/30"></div>
+        <div id="error-msg"
+            class="hidden max-w-lg mx-auto text-center text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/10 p-4 rounded-xl border border-red-200 dark:border-red-900/30">
+        </div>
+
+        <div id="propagation-banner"
+            class="hidden mb-6 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm shadow-sm transition-all glass-panel">
+            <div class="flex items-center gap-4 mb-4 sm:mb-0">
+                <div
+                    class="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800 dark:text-white text-base">Check Worldwide Propagation</h4>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Verify if records for <strong
+                            id="banner-domain" class="text-blue-600 dark:text-blue-400 font-mono"></strong> have
+                        propagated globally.</p>
+                </div>
+            </div>
+            <button onclick="openPropagationModal()"
+                class="w-full sm:w-auto shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-xl text-sm px-5 py-2.5 transition-all shadow-md flex justify-center items-center gap-2">
+                Check Propagation
+            </button>
+        </div>
 
         <div id="results" class="hidden grid-cols-1 md:grid-cols-2 gap-4">
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-blue-500"></span> A Records (IPv4)
                 </div>
-                <div id="res-a" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
+                <div id="res-a" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden">
+                </div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-indigo-500"></span> AAAA Records (IPv6)
                 </div>
-                <div id="res-aaaa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden break-all"></div>
+                <div id="res-aaaa"
+                    class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden break-all"></div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-purple-600 dark:text-purple-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500"></span> Mail Servers (MX)
                 </div>
-                <div id="res-mx" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
+                <div id="res-mx" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden">
+                </div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Nameservers
                 </div>
-                <div id="res-ns" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
+                <div id="res-ns" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden">
+                </div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-cyan-600 dark:text-cyan-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-cyan-500"></span> Start of Authority (SOA)
                 </div>
-                <div id="res-soa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
+                <div id="res-soa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden">
+                </div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-orange-600 dark:text-orange-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-orange-500"></span> TXT Records
                 </div>
-                <div id="res-txt" class="font-mono text-xs text-slate-600 dark:text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar"></div>
+                <div id="res-txt"
+                    class="font-mono text-xs text-slate-600 dark:text-slate-400 break-all space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+                </div>
             </div>
 
             <div id="card-cname" class="glass-panel p-5 md:p-6 rounded-xl space-y-3 hidden">
-                <div class="text-pink-600 dark:text-pink-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-pink-600 dark:text-pink-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-pink-500"></span> CNAME (Alias)
                 </div>
-                <div id="res-cname" class="font-mono text-sm text-slate-800 dark:text-white overflow-hidden break-all"></div>
+                <div id="res-cname" class="font-mono text-sm text-slate-800 dark:text-white overflow-hidden break-all">
+                </div>
             </div>
 
             <div class="glass-panel p-5 md:p-6 rounded-xl space-y-3">
-                <div class="text-teal-600 dark:text-teal-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <div
+                    class="text-teal-600 dark:text-teal-400 text-xs font-bold uppercase tracking-wider flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-teal-500"></span> CAA (SSL Security)
                 </div>
-                <div id="res-caa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden"></div>
+                <div id="res-caa" class="font-mono text-sm space-y-2 text-slate-800 dark:text-white overflow-hidden">
+                </div>
             </div>
         </div>
 
@@ -226,24 +374,32 @@
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">CLI Access</h3>
                 <div class="bg-[#0f172a] rounded-xl p-5 font-mono text-sm border border-slate-800 space-y-6 shadow-lg">
                     <div>
-                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">Text Report</div>
+                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">Text
+                            Report</div>
                         <div class="group cursor-pointer" onclick="copyText('cmd1')">
-                            <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
-                                <code id="cmd1" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
+                            <div
+                                class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
+                                <code id="cmd1"
+                                    class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
                                     $ curl https://dns.wiredalter.com/google.com
                                 </code>
-                                <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
+                                <span
+                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">JSON Data</div>
+                        <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">JSON
+                            Data</div>
                         <div class="group cursor-pointer" onclick="copyText('cmd2')">
-                            <div class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
-                                <code id="cmd2" class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
+                            <div
+                                class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
+                                <code id="cmd2"
+                                    class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
                                     $ curl https://dns.wiredalter.com/api/lookup/google.com
                                 </code>
-                                <span class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
+                                <span
+                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
                             </div>
                         </div>
                     </div>
@@ -253,24 +409,36 @@
             <div class="space-y-6 text-sm">
                 <div class="space-y-1">
                     <h4 class="font-bold text-blue-600 dark:text-blue-400">What is this?</h4>
-                    <p class="text-slate-600 dark:text-slate-400">A free tool to check DNS propagation and record details directly from our servers.</p>
+                    <p class="text-slate-600 dark:text-slate-400">A free tool to check DNS propagation and record
+                        details directly from our servers.</p>
+                </div>
+                <div class="space-y-1">
+                    <h4 class="font-bold text-blue-600 dark:text-blue-400">Global Propagation Checker</h4>
+                    <p class="text-slate-600 dark:text-slate-400">Use the propagation checker to verify if your DNS
+                        records have successfully updated across multiple geographic regions worldwide.</p>
                 </div>
                 <div class="space-y-1">
                     <h4 class="font-bold text-blue-600 dark:text-blue-400">Does it cache results?</h4>
-                    <p class="text-slate-600 dark:text-slate-400">We respect the TTL (Time To Live) of the records, but our lookups are performed in real-time.</p>
+                    <p class="text-slate-600 dark:text-slate-400">We respect the TTL (Time To Live) of the records, but
+                        our lookups are performed in real-time.</p>
                 </div>
                 <div class="space-y-1">
                     <h4 class="font-bold text-blue-600 dark:text-blue-400">API Usage?</h4>
-                    <p class="text-slate-600 dark:text-slate-400">You can use <code>/api/lookup/domain.com</code> to get a JSON response for your applications.</p>
+                    <p class="text-slate-600 dark:text-slate-400">You can use <code>/api/lookup/domain.com</code> to get
+                        a JSON response for your applications.</p>
                 </div>
             </div>
         </div>
 
         <section class="max-w-3xl mx-auto px-4 pb-16">
-            <div class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm shadow-sm">
+            <div
+                class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm shadow-sm">
                 <div class="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-full mb-4">
-                    <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                        </path>
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Fully Open Source</h3>
@@ -278,9 +446,12 @@
                     For full transparency, this service runs entirely in memory and logs nothing.
                     Inspect the code, audit the security, or host it yourself.
                 </p>
-                <a href="https://github.com/buildplan/dns-service" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-[#24292e] hover:bg-[#2f363d] text-white rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-black/20 border border-white/5">
+                <a href="https://github.com/buildplan/dns-service" target="_blank"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-[#24292e] hover:bg-[#2f363d] text-white rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-black/20 border border-white/5">
                     <svg class="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                        <path
+                            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                        </path>
                     </svg>
                     GitHub
                 </a>
@@ -289,11 +460,70 @@
 
     </main>
 
-    <footer class="border-t border-slate-200 dark:border-slate-800/60 bg-white dark:bg-[#0b1120] py-8 text-center text-slate-600 dark:text-slate-600 text-sm">
-        <p><a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms & Privacy</a></p>
+    <footer
+        class="border-t border-slate-200 dark:border-slate-800/60 bg-white dark:bg-[#0b1120] py-8 text-center text-slate-600 dark:text-slate-600 text-sm">
+        <p><a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms & Privacy</a>
+        </p>
         <p>&copy; <span id="year"></span> WiredAlter DNS Service. Powered by
-            <a href="https://nodejs.org" target="_blank" class="hover:text-slate-900 dark:hover:text-slate-500 underline decoration-slate-400 dark:decoration-slate-800">Node.js</a>.</p>
+            <a href="https://nodejs.org" target="_blank"
+                class="hover:text-slate-900 dark:hover:text-slate-500 underline decoration-slate-400 dark:decoration-slate-800">Node.js</a>.
+        </p>
     </footer>
+
+    <!-- Propagation Modal -->
+    <dialog id="propagationModal"
+        class="glass-panel w-[95%] max-w-5xl p-0 rounded-2xl shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95"
+        style="max-height: 90vh;">
+        <div class="flex flex-col h-full max-h-[90vh]">
+            <div class="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-800">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    Global DNS Propagation
+                </h2>
+                <button onclick="closePropagationModal()"
+                    class="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-5 bg-slate-50 dark:bg-slate-800/30 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+                    <input type="text" id="propDomain" class="flex-1 p-3 text-sm rounded-xl search-input shadow-sm"
+                        placeholder="example.com" onkeydown="if(event.key === 'Enter') checkPropagation()">
+                    <select id="propType"
+                        class="p-3 text-sm rounded-xl search-input shadow-sm w-full sm:w-32 bg-white dark:bg-slate-800">
+                        <option value="A" selected>A</option>
+                        <option value="AAAA">AAAA</option>
+                        <option value="CNAME">CNAME</option>
+                        <option value="MX">MX</option>
+                        <option value="NS">NS</option>
+                        <option value="TXT">TXT</option>
+                    </select>
+                    <button onclick="checkPropagation()"
+                        class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-xl text-sm px-6 py-3 transition-all shadow-md shrink-0">Search</button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-5 relative">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-[400px]">
+                    <div id="mapContainer"
+                        class="bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner z-10 lg:sticky lg:top-0 h-[300px] lg:h-full">
+                    </div>
+                    <div id="propResults" class="space-y-3 h-full overflow-y-auto custom-scrollbar pr-2 pb-4">
+                        <div class="text-center text-slate-500 mt-10">Enter a domain and click Search to check global
+                            propagation.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <script>
         document.getElementById("year").innerText = new Date().getFullYear();
@@ -306,7 +536,7 @@
                 document.documentElement.classList.add('dark');
             }
         }
-        
+
         function toggleTheme() {
             const html = document.documentElement;
             if (html.classList.contains('dark')) {
@@ -322,7 +552,7 @@
         function showToast(message) {
             const x = document.getElementById("toast");
             x.innerText = message; x.className = "show";
-            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
         }
 
         function copyText(id) {
@@ -331,14 +561,14 @@
 
         async function lookup() {
             let domainInput = document.getElementById('domainInput').value.trim();
-            if(!domainInput) return;
+            if (!domainInput) return;
 
             // Remove http:// or https://
             let domain = domainInput.replace(/^https?:\/\//i, '');
-            
+
             // Remove trailing paths or slashes
             domain = domain.split('/')[0];
-            
+
             // Remove URL parameters (e.g., example.com?q=1 -> example.com)
             domain = domain.split('?')[0];
 
@@ -346,13 +576,15 @@
             document.getElementById('domainInput').value = domain;
 
             document.getElementById('results').classList.add('hidden');
+            document.getElementById('propagation-banner').classList.add('hidden');
+            document.getElementById('propagation-banner').classList.remove('flex');
             document.getElementById('error-msg').classList.add('hidden');
 
             try {
                 const res = await fetch(`/api/lookup/${domain}`);
                 const data = await res.json();
 
-                if(data.error) throw new Error(data.error);
+                if (data.error) throw new Error(data.error);
 
                 // Helper to render lists
                 const render = (id, list, mapFn) => {
@@ -384,7 +616,7 @@
                 }
 
                 // Render CAA
-                render('res-caa', data.records.CAA, c => 
+                render('res-caa', data.records.CAA, c =>
                     `<span class="text-slate-500 mr-2 font-bold">${c.issue || c.issuewild || 'iodef'}</span> "${c.value}"`
                 );
 
@@ -407,6 +639,10 @@
                 document.getElementById('results').classList.remove('hidden');
                 document.getElementById('results').classList.add('grid');
 
+                document.getElementById('banner-domain').innerText = domain;
+                document.getElementById('propagation-banner').classList.remove('hidden');
+                document.getElementById('propagation-banner').classList.add('flex');
+
             } catch (err) {
                 const errDiv = document.getElementById('error-msg');
                 errDiv.innerText = err.message || "Lookup Failed";
@@ -417,20 +653,20 @@
         // --- Typewriter & IP Logic ---
         function startPlaceholderAnimation() {
             const input = document.getElementById('domainInput');
-            const phrases = [ "Lookup a Domain: e.g. wiredalter.com", "Check DNS: e.g. google.com" ];
+            const phrases = ["Lookup a Domain: e.g. wiredalter.com", "Check DNS: e.g. google.com"];
             let phraseIndex = 0; let charIndex = 0; let isDeleting = false;
-            
+
             function typeLoop() {
                 if (input.value) { setTimeout(typeLoop, 2000); return; }
                 const currentPhrase = phrases[phraseIndex];
                 input.placeholder = currentPhrase.substring(0, charIndex);
-                
-                let typeSpeed = 50; 
+
+                let typeSpeed = 50;
                 if (isDeleting) { typeSpeed = 25; charIndex--; } else { charIndex++; }
-                
+
                 if (!isDeleting && charIndex === currentPhrase.length + 1) { typeSpeed = 2000; isDeleting = true; }
                 else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500; }
-                
+
                 setTimeout(typeLoop, typeSpeed);
             }
             typeLoop();
@@ -440,7 +676,7 @@
             .then(res => res.json())
             .then(data => {
                 document.getElementById('my-ip').innerText = data.ip;
-                document.getElementById('my-flag').innerText = getFlagEmoji(data.country_code || 'XX'); 
+                document.getElementById('my-flag').innerText = getFlagEmoji(data.country_code || 'XX');
                 document.getElementById('my-connection').classList.remove('hidden');
                 startPlaceholderAnimation();
             })
@@ -448,10 +684,196 @@
 
         function getFlagEmoji(countryCode) {
             if (!countryCode || countryCode.length !== 2) return '';
-            const codePoints = countryCode.toUpperCase().split('').map(char =>  127397 + char.charCodeAt());
+            const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
             return String.fromCodePoint(...codePoints);
         }
 
+        // --- PROPAGATION MODAL & MAP LOGIC ---
+        let map = null;
+        let markers = {};
+        let serversList = [];
+
+        function initMap() {
+            if (map) return;
+
+            const worldBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
+
+            map = L.map('mapContainer', {
+                maxBounds: worldBounds,
+                maxBoundsViscosity: 1.0,
+                minZoom: 1.5,
+                worldCopyJump: true
+            }).setView([20, 0], 2);
+
+            const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+            L.tileLayer(tileUrl, {
+                attribution: '&copy; OpenStreetMap contributors',
+                subdomains: 'abc',
+                maxZoom: 19,
+                noWrap: false
+            }).addTo(map);
+
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('mapContainer').style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+            } else {
+                document.getElementById('mapContainer').style.filter = 'none';
+            }
+
+            // Fetch servers and plot initially
+            fetch('/api/propagation-servers?t=' + Date.now())
+                .then(res => {
+                    if (!res.ok) throw new Error('Failed to load servers (HTTP ' + res.status + ')');
+                    return res.json();
+                })
+                .then(servers => {
+                    serversList = servers;
+                    servers.forEach(s => {
+                        const marker = L.circleMarker([s.lat, s.lng], {
+                            radius: 6,
+                            fillColor: "#94a3b8", // gray
+                            color: "#fff",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }).addTo(map);
+                        marker.bindPopup(`<b>${s.name}</b><br>${s.location}`);
+                        markers[s.id] = marker;
+                    });
+                })
+                .catch(err => {
+                    console.error('Servers fetch error:', err);
+                    document.getElementById('propResults').innerHTML = `<div class="text-center text-red-500 mt-10 p-4 bg-red-500/10 rounded-xl border border-red-500/20"><b>Error Loading Map Nodes</b><br>Could not load the global servers. Make sure the backend is fully deployed and try refreshing without cache.</div>`;
+                });
+        }
+
+        function updateMapTheme() {
+            if (!map) return;
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('mapContainer').style.filter = 'invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)';
+            } else {
+                document.getElementById('mapContainer').style.filter = 'none';
+            }
+        }
+
+        // Hook into toggleTheme to update map
+        const originalToggleTheme = toggleTheme;
+        toggleTheme = function () {
+            originalToggleTheme();
+            updateMapTheme();
+        };
+
+        function openPropagationModal() {
+            const modal = document.getElementById('propagationModal');
+            modal.showModal();
+            const currentDomain = document.getElementById('domainInput').value;
+            if (currentDomain) {
+                document.getElementById('propDomain').value = currentDomain;
+            }
+
+            // Map needs to invalidate size after modal opens since its container size changed
+            setTimeout(() => {
+                initMap();
+                if (map) map.invalidateSize();
+            }, 100);
+        }
+
+        function closePropagationModal() {
+            document.getElementById('propagationModal').close();
+        }
+
+        async function checkPropagation() {
+            let domain = document.getElementById('propDomain').value.trim();
+            const type = document.getElementById('propType').value;
+            if (!domain) return;
+
+            domain = domain.replace(/^https?:\/\//i, '').split('/')[0].split('?')[0];
+            document.getElementById('propDomain').value = domain;
+
+            const resultsContainer = document.getElementById('propResults');
+            resultsContainer.innerHTML = '';
+
+            if (serversList.length === 0) return;
+
+            // Reset markers
+            serversList.forEach(s => {
+                if (markers[s.id]) {
+                    markers[s.id].setStyle({ fillColor: "#94a3b8" }); // Reset to gray
+                }
+
+                // Create row
+                const row = document.createElement('div');
+                row.id = `row-${s.id}`;
+                row.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm transition-all";
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2 sm:mb-0 w-full sm:w-1/3">
+                        <span class="text-xl" title="${s.location}">${getFlagEmoji(s.country)}</span>
+                        <div>
+                            <div class="font-bold text-slate-800 dark:text-white text-sm">${s.name}</div>
+                            <div class="text-xs text-slate-500">${s.location}</div>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex justify-center w-full">
+                        <span id="val-${s.id}" class="text-slate-400 text-sm font-mono flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                            </span> Checking...
+                        </span>
+                    </div>
+                    <div class="w-full sm:w-8 flex justify-end">
+                        <span id="status-${s.id}"></span>
+                    </div>
+                `;
+                resultsContainer.appendChild(row);
+            });
+
+            // Perform concurrent lookups
+            for (const s of serversList) {
+                fetch(`/api/propagate/${domain}/${type}?server=${s.ip}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const valSpan = document.getElementById(`val-${s.id}`);
+                        const statusSpan = document.getElementById(`status-${s.id}`);
+
+                        if (data.error) throw new Error(data.error);
+
+                        // Format data
+                        let valStr = '';
+                        if (Array.isArray(data.data)) {
+                            if (data.data.length > 0) {
+                                if (typeof data.data[0] === 'object') {
+                                    valStr = data.data.map(d => JSON.stringify(d)).join(', ');
+                                } else {
+                                    valStr = data.data.join(', ');
+                                }
+                            } else {
+                                valStr = 'No records';
+                            }
+                        } else if (typeof data.data === 'object') {
+                            valStr = data.data.nsname || data.data.value || JSON.stringify(data.data);
+                        } else {
+                            valStr = data.data || 'No records';
+                        }
+
+                        valSpan.innerHTML = `<span class="text-slate-800 dark:text-slate-200 break-all">${valStr}</span>`;
+
+                        if (valStr !== 'No records' && !data.error) {
+                            statusSpan.innerHTML = `<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                            markers[s.id].setStyle({ fillColor: "#22c55e" }); // green
+                        } else {
+                            statusSpan.innerHTML = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                            markers[s.id].setStyle({ fillColor: "#ef4444" }); // red
+                        }
+                    })
+                    .catch(err => {
+                        document.getElementById(`val-${s.id}`).innerHTML = `<span class="text-red-500 text-xs">${err.message || 'Error'}</span>`;
+                        document.getElementById(`status-${s.id}`).innerHTML = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                        markers[s.id].setStyle({ fillColor: "#ef4444" }); // red
+                    });
+            }
+        }
     </script>
 </body>
+
 </html>
