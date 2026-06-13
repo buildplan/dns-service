@@ -10,10 +10,10 @@ services:
     cap_drop:
       - ALL
     ports:
-      - "127.0.0.1:5000:5000"
+      - "127.0.0.1:5050:5050"
     environment:
       - NODE_ENV=production
-      - PORT=5000
+      - PORT=5050
       - TRUST_PROXY=2 # 2 because Cloudflare -> NginxProxyManager -> App
     deploy:
       resources:

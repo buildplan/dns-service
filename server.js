@@ -75,6 +75,79 @@ app.use(globalLimiter);
 
 app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'views', 'terms.html')));
 
+// --- PROPAGATION SERVERS ---
+const PROPAGATION_SERVERS = [
+    { id: 'google', name: 'Google', location: 'California, US', country: 'US', lat: 37.3861, lng: -122.0839, ip: '8.8.8.8' },
+    { id: 'google-alt', name: 'Google (JP)', location: 'Tokyo, JP', country: 'JP', lat: 35.6895, lng: 139.6917, ip: '8.8.4.4' },
+    { id: 'cloudflare', name: 'Cloudflare', location: 'New York, US', country: 'US', lat: 40.7128, lng: -74.0060, ip: '1.1.1.1' },
+    { id: 'cloudflare-alt', name: 'Cloudflare (AU)', location: 'Sydney, AU', country: 'AU', lat: -33.8688, lng: 151.2093, ip: '1.0.0.1' },
+    { id: 'opendns', name: 'OpenDNS', location: 'San Francisco, US', country: 'US', lat: 37.7749, lng: -122.4194, ip: '208.67.222.222' },
+    { id: 'opendns-alt', name: 'OpenDNS (ZA)', location: 'Cape Town, ZA', country: 'ZA', lat: -33.9249, lng: 18.4241, ip: '208.67.220.220' },
+    { id: 'quad9', name: 'Quad9', location: 'Frankfurt, DE', country: 'DE', lat: 50.1109, lng: 8.6821, ip: '9.9.9.9' },
+    { id: 'quad9-alt', name: 'Quad9 (BR)', location: 'São Paulo, BR', country: 'BR', lat: -23.5505, lng: -46.6333, ip: '149.112.112.112' },
+    { id: 'yandex', name: 'Yandex', location: 'Moscow, RU', country: 'RU', lat: 55.7558, lng: 37.6173, ip: '77.88.8.8' },
+    { id: '114dns', name: '114DNS', location: 'Nanjing, CN', country: 'CN', lat: 32.0603, lng: 118.7969, ip: '114.114.114.114' },
+    { id: 'adguard', name: 'AdGuard (UK)', location: 'London, UK', country: 'GB', lat: 51.5074, lng: -0.1278, ip: '94.140.14.14' },
+    { id: 'adguard-alt', name: 'AdGuard (CL)', location: 'Santiago, CL', country: 'CL', lat: -33.4489, lng: -70.6693, ip: '94.140.15.15' },
+    { id: 'cleanbrowsing', name: 'CleanBrowsing (PK)', location: 'Islamabad, PK', country: 'PK', lat: 33.6844, lng: 73.0479, ip: '185.228.168.9' },
+    { id: 'cloudflare-sa', name: 'Cloudflare (SA)', location: 'Riyadh, SA', country: 'SA', lat: 24.7136, lng: 46.6753, ip: '1.1.1.2' },
+    { id: 'cloudflare-ae', name: 'Cloudflare (AE)', location: 'Dubai, AE', country: 'AE', lat: 25.2048, lng: 55.2708, ip: '1.0.0.2' },
+    { id: 'quad9-eg', name: 'Quad9 (EG)', location: 'Cairo, EG', country: 'EG', lat: 30.0444, lng: 31.2357, ip: '9.9.9.10' },
+    { id: 'opendns-in', name: 'OpenDNS (IN)', location: 'Mumbai, IN', country: 'IN', lat: 19.0760, lng: 72.8777, ip: '208.67.222.123' }
+];
+
+app.get('/api/propagation-servers', (req, res) => {
+    res.json(PROPAGATION_SERVERS);
+});
+
+app.get('/api/propagate/:domain/:type', async (req, res) => {
+    const { domain, type } = req.params;
+    const { server } = req.query;
+
+    if (!isValidDomain(domain)) {
+        return res.status(400).json({ error: "Invalid domain format." });
+    }
+    if (!server) {
+        return res.status(400).json({ error: "Server IP is required." });
+    }
+
+    try {
+        const resolver = new dns.Resolver();
+        resolver.setServers([server]);
+
+        const start = Date.now();
+        const reqType = type.toUpperCase();
+
+        const lookup = () => {
+            switch (reqType) {
+                case 'A': return resolver.resolve4(domain);
+                case 'AAAA': return resolver.resolve6(domain);
+                case 'MX': return resolver.resolveMx(domain);
+                case 'TXT': return resolver.resolveTxt(domain);
+                case 'NS': return resolver.resolveNs(domain);
+                case 'SOA': return resolver.resolveSoa(domain);
+                case 'CNAME': return resolver.resolveCname(domain);
+                case 'CAA': return resolver.resolveCaa(domain);
+                case 'SRV': return resolver.resolveSrv(domain);
+                case 'PTR': return resolver.resolvePtr(domain);
+                default: throw new Error("Unsupported record type.");
+            }
+        };
+
+        const val = await withTimeout(lookup(), 5000);
+
+        res.json({
+            domain,
+            type: reqType,
+            server,
+            latency_ms: Date.now() - start,
+            data: val
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message || "Lookup failed" });
+    }
+});
+
 // 2. API Endpoint (JSON)
 app.get('/api/lookup/:domain', async (req, res) => {
     // Sanitize immediately
@@ -201,6 +274,6 @@ app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Use the environment variable PORT, or default to 5000
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 DNS Service running on ${PORT}`));
+// Use the environment variable PORT, or default to 5050
+const PORT = process.env.PORT || 5050;
+app.listen(PORT, '0.0.0.0', () => console.log(`🚀 DNS Service running on ${PORT}`));
