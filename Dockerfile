@@ -14,7 +14,7 @@ RUN npm ci --only=production && npm cache clean --force
 COPY . .
 
 # === Final stage: Create minimal runtime image ===
-FROM dhi.io/node:26.3.0-alpine3.24@sha256:9640a20e8d61a1d791ff104c83be48f07e288739ab95e11ccce22614f515416f
+FROM dhi.io/node:26.3.0-alpine3.24@sha256:089d198f942d7b73f585ef93dba3597e1cc2297435e8021a7784a248c7864d48
 
 ENV NODE_ENV=production
 ENV PATH=/app/node_modules/.bin:$PATH
