@@ -10,13 +10,13 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.6.0",
+    "express-rate-limit": "^8.6.1",
     "lru-cache": "^11.5.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
   },
   "engines": {
-    "node": ">=26.5.0"
+    "node": ">=26.5.1"
   }
 }
