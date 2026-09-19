@@ -11,12 +11,12 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
-    "lru-cache": "^11.5.2"
+    "lru-cache": "^11.5.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
   },
   "engines": {
-    "node": ">=26.8.2"
+    "node": ">=26.9.0"
   }
 }
