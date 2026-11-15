@@ -2,7 +2,7 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: [ "main", "dev", "dev-*", "dev_*" ]
     tags: [ 'v*.*.*' ]
   workflow_dispatch:
 
@@ -61,7 +61,7 @@ jobs:
             ${{ env.DOCKER_HUB_REPO }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' }}
+            type=raw,value=dev,enable=${{ github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/heads/dev-') || startsWith(github.ref, 'refs/heads/dev_') }}
             type=semver,pattern={{version}}
 
       # 5. Build & Push

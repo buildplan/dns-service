@@ -1,5 +1,6 @@
 const express = require('express');
 const dns = require('dns').promises;
+const net = require('net');
 const path = require('path');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -100,6 +101,8 @@ app.get('/api/propagation-servers', (req, res) => {
     res.json(PROPAGATION_SERVERS);
 });
 
+const ALLOWED_PROPAGATION_TYPES = new Set(['A', 'AAAA', 'MX', 'TXT', 'NS', 'SOA', 'CNAME', 'CAA', 'SRV', 'PTR']);
+
 app.get('/api/propagate/:domain/:type', async (req, res) => {
     const { domain, type } = req.params;
     const { server } = req.query;
@@ -110,13 +113,19 @@ app.get('/api/propagate/:domain/:type', async (req, res) => {
     if (!server) {
         return res.status(400).json({ error: "Server IP is required." });
     }
+    if (!net.isIP(String(server))) {
+        return res.status(400).json({ error: "Invalid resolver IP." });
+    }
+    const reqType = String(type || '').toUpperCase();
+    if (!ALLOWED_PROPAGATION_TYPES.has(reqType)) {
+        return res.status(400).json({ error: "Unsupported record type." });
+    }
 
     try {
         const resolver = new dns.Resolver();
         resolver.setServers([server]);
 
         const start = Date.now();
-        const reqType = type.toUpperCase();
 
         const lookup = () => {
             switch (reqType) {
@@ -232,6 +241,9 @@ app.get('/:domain', async (req, res, next) => {
     const ua = req.headers['user-agent'];
     if (isCli(ua)) {
         const domain = req.params.domain.trim().toLowerCase();
+        if (!isValidDomain(domain)) {
+            return res.status(400).send('Invalid domain format.\n');
+        }
         const safeDomain = escapeHtml(domain);
         try {
             const cacheKey = `cli_${domain}`;

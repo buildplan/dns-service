@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <script src="/assets/js/theme-init.js"></script>
 
     <title>WiredAlter DNS Lookup</title>
     <meta name="description"
@@ -32,138 +34,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon/android-chrome-512x512.png">
     <link rel="manifest" href="/favicon/site.webmanifest">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { wired: { dark: '#0b1120', light: '#f8fafc' } } } } }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* --- GLASS PANEL (THEME AWARE) --- */
-        .glass-panel {
-            backdrop-filter: blur(12px);
-            transition: all 0.3s;
-        }
-
-        html.dark .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        html:not(.dark) .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(203, 213, 225, 0.6);
-            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05);
-        }
-
-        /* --- SEARCH INPUT (THEME AWARE) --- */
-        .search-input {
-            transition: all 0.2s;
-        }
-
-        html.dark .search-input {
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid #334155;
-            color: white;
-        }
-
-        html.dark .search-input:focus {
-            background: rgba(30, 41, 59, 1);
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        html:not(.dark) .search-input {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #cbd5e1;
-            color: #0f172a;
-        }
-
-        html:not(.dark) .search-input:focus {
-            background: #ffffff;
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        /* --- SCROLLBARS --- */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        html.dark .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-
-        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(203, 213, 225, 0.5);
-        }
-
-        html:not(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 10px;
-        }
-
-        /* --- TOAST --- */
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            text-align: center;
-            border-radius: 8px;
-            padding: 12px 16px;
-            position: fixed;
-            z-index: 100;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
-        }
-
-        html.dark #toast {
-            background-color: #1e293b;
-            color: #fff;
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-        }
-
-        html:not(.dark) #toast {
-            background-color: #fff;
-            color: #0f172a;
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-            bottom: 50px;
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/app.css">
 </head>
 
 <body class="bg-wired-light dark:bg-wired-dark text-slate-600 dark:text-slate-300 min-h-screen flex flex-col">
@@ -178,13 +49,13 @@
             </div>
 
             <div
-                class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-sm transition-colors">
+                class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-xs transition-colors">
                 <a href="https://www.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">HOME</a>
                 <a href="https://ip.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">IP</a>
                 <a href="#"
-                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-xs cursor-default">DNS</a>
                 <a href="https://whois.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">WHOIS</a>
                 <a href="https://audit.wiredalter.com"
@@ -194,16 +65,16 @@
 
         <div class="absolute top-6 right-6 md:static flex items-center gap-4 text-sm font-medium text-slate-500">
 
-            <button onclick="toggleTheme()"
-                class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
+            <button type="button" id="themeToggleBtn"
+                class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-all"
                 aria-label="Toggle Theme">
-                <svg id="icon-sun" class="w-5 h-5 hidden dark:block text-slate-400 hover:text-yellow-400" fill="none"
+                <svg id="icon-sun" aria-hidden="true" class="w-5 h-5 hidden dark:block text-slate-400 hover:text-yellow-400" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
                     </path>
                 </svg>
-                <svg id="icon-moon" class="w-5 h-5 block dark:hidden text-slate-600 hover:text-blue-600" fill="none"
+                <svg id="icon-moon" aria-hidden="true" class="w-5 h-5 block dark:hidden text-slate-600 hover:text-blue-600" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
@@ -221,7 +92,7 @@
         </div>
     </nav>
 
-    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 pb-20 md:py-20 w-full space-y-10">
+    <main class="grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 pb-20 md:py-20 w-full space-y-10">
 
         <div class="text-center space-y-8 md:space-y-6 max-w-3xl mx-auto">
             <div class="space-y-2">
@@ -232,21 +103,21 @@
             </div>
 
             <div class="relative max-w-lg mx-auto mt-6">
-                <input type="text" id="domainInput"
-                    class="block w-full p-4 pl-6 text-sm rounded-xl search-input placeholder-slate-400 dark:placeholder-slate-500 shadow-xl"
-                    placeholder="example.com" onkeydown="if(event.key === 'Enter') lookup()">
+                <input type="text" id="domainInput" aria-label="Domain name" autocomplete="off" autocapitalize="none" spellcheck="false"
+                    class="block w-full p-4 pl-6 pr-28 text-sm rounded-xl search-input placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-xl"
+                    placeholder="example.com">
                 <div class="absolute right-2.5 top-2.5 flex gap-2">
-                    <button onclick="openPropagationModal()"
-                        class="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-slate-300 dark:focus:ring-slate-800 font-medium rounded-lg text-sm px-3 py-2 transition-all shadow border border-slate-300 dark:border-slate-700"
-                        title="Global Propagation Checker">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="button" data-open-propagation="1"
+                        class="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:outline-hidden focus:ring-slate-300 dark:focus:ring-slate-800 font-medium rounded-lg text-sm px-3 py-2 transition-all shadow-sm border border-slate-300 dark:border-slate-700"
+                        title="Global Propagation Checker" aria-label="Global Propagation Checker">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                             </path>
                         </svg>
                     </button>
-                    <button onclick="lookup()"
-                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
+                    <button type="button" id="lookupBtn"
+                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
                 </div>
             </div>
         </div>
@@ -270,10 +141,10 @@
         </div>
 
         <div id="propagation-banner"
-            class="hidden mb-6 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm shadow-sm transition-all glass-panel">
+            class="hidden mb-6 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-xs shadow-xs transition-all glass-panel">
             <div class="flex items-center gap-4 mb-4 sm:mb-0">
                 <div
-                    class="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                    class="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 shadow-xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
@@ -287,8 +158,8 @@
                         propagated globally.</p>
                 </div>
             </div>
-            <button onclick="openPropagationModal()"
-                class="w-full sm:w-auto shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-xl text-sm px-5 py-2.5 transition-all shadow-md flex justify-center items-center gap-2">
+            <button type="button" data-open-propagation="1"
+                class="w-full sm:w-auto shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-blue-800 font-medium rounded-xl text-sm px-5 py-2.5 transition-all shadow-md flex justify-center items-center gap-2">
                 Check Propagation
             </button>
         </div>
@@ -376,32 +247,32 @@
                     <div>
                         <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">Text
                             Report</div>
-                        <div class="group cursor-pointer" onclick="copyText('cmd1')">
-                            <div
+                        <button type="button" data-copy-target="cmd1" class="w-full text-left group cursor-pointer">
+                            <span
                                 class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
                                 <code id="cmd1"
                                     class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
                                     $ curl https://dns.wiredalter.com/google.com
                                 </code>
                                 <span
-                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
-                            </div>
-                        </div>
+                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0">COPY</span>
+                            </span>
+                        </button>
                     </div>
                     <div>
                         <div class="text-xs text-slate-500 mb-2 font-sans font-semibold uppercase tracking-wider">JSON
                             Data</div>
-                        <div class="group cursor-pointer" onclick="copyText('cmd2')">
-                            <div
+                        <button type="button" data-copy-target="cmd2" class="w-full text-left group cursor-pointer">
+                            <span
                                 class="flex justify-between items-center text-slate-300 hover:text-white transition-colors bg-slate-900/50 p-3 rounded-lg border border-slate-700/30">
                                 <code id="cmd2"
                                     class="font-mono text-sm mr-4 overflow-x-auto whitespace-nowrap min-w-0 flex-1 custom-scrollbar pb-2">
                                     $ curl https://dns.wiredalter.com/api/lookup/google.com
                                 </code>
                                 <span
-                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">COPY</span>
-                            </div>
-                        </div>
+                                    class="text-blue-500 text-xs font-bold opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0">COPY</span>
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -432,7 +303,7 @@
 
         <section class="max-w-3xl mx-auto px-4 pb-16">
             <div
-                class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm shadow-sm">
+                class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-xs shadow-xs">
                 <div class="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-full mb-4">
                     <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
@@ -446,9 +317,9 @@
                     For full transparency, this service runs entirely in memory and logs nothing.
                     Inspect the code, audit the security, or host it yourself.
                 </p>
-                <a href="https://github.com/buildplan/dns-service" target="_blank"
+                <a href="https://github.com/buildplan/dns-service" target="_blank" rel="noopener noreferrer"
                     class="inline-flex items-center gap-2 px-6 py-3 bg-[#24292e] hover:bg-[#2f363d] text-white rounded-xl font-medium transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-black/20 border border-white/5">
-                    <svg class="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
+                    <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 16 16" fill="currentColor">
                         <path
                             d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
                         </path>
@@ -465,417 +336,91 @@
         <p><a href="/terms" class="hover:text-slate-900 dark:hover:text-slate-300 transition-colors">Terms & Privacy</a>
         </p>
         <p>&copy; <span id="year"></span> WiredAlter DNS Service. Powered by
-            <a href="https://nodejs.org" target="_blank"
+            <a href="https://nodejs.org" target="_blank" rel="noopener noreferrer"
                 class="hover:text-slate-900 dark:hover:text-slate-500 underline decoration-slate-400 dark:decoration-slate-800">Node.js</a>.
         </p>
     </footer>
 
     <!-- Propagation Modal -->
-    <dialog id="propagationModal"
-        class="glass-panel w-[95%] max-w-5xl p-0 rounded-2xl shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95"
-        style="max-height: 90vh;">
-        <div class="flex flex-col h-full max-h-[90vh]">
-            <div class="flex justify-between items-center p-5 border-b border-slate-200 dark:border-slate-800">
-                <h2 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
-                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <dialog id="propagationModal" aria-labelledby="propagation-modal-title" closedby="any"
+        class="w-[calc(100dvw-1rem)] sm:w-[min(94dvw,68rem)] h-[min(92dvh,54rem)] lg:h-[min(86dvh,48rem)] max-h-[92dvh] p-0 m-auto rounded-2xl overflow-hidden shadow-2xl backdrop:bg-slate-900/65 backdrop:backdrop-blur-xs border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100">
+        <div class="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                <h2 id="propagation-modal-title" class="text-base sm:text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5 sm:gap-3">
+                    <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                         </path>
                     </svg>
-                    Global DNS Propagation
+                    <span>Global DNS Propagation</span>
                 </h2>
-                <button onclick="closePropagationModal()"
-                    class="p-2 text-slate-400 hover:text-slate-800 dark:hover:text-white rounded-lg transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button type="button" id="closePropagationBtn" aria-label="Close propagation modal"
+                    class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] -mr-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+                    <svg aria-hidden="true" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                         </path>
                     </svg>
                 </button>
             </div>
 
-            <div class="p-5 bg-slate-50 dark:bg-slate-800/30 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
-                    <input type="text" id="propDomain" class="flex-1 p-3 text-sm rounded-xl search-input shadow-sm"
-                        placeholder="example.com" onkeydown="if(event.key === 'Enter') checkPropagation()">
-                    <select id="propType"
-                        class="p-3 text-sm rounded-xl search-input shadow-sm w-full sm:w-32 bg-white dark:bg-slate-800">
-                        <option value="A" selected>A</option>
-                        <option value="AAAA">AAAA</option>
-                        <option value="CNAME">CNAME</option>
-                        <option value="MX">MX</option>
-                        <option value="NS">NS</option>
-                        <option value="TXT">TXT</option>
-                    </select>
-                    <button onclick="checkPropagation()"
-                        class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-xl text-sm px-6 py-3 transition-all shadow-md shrink-0">Search</button>
+            <div class="px-4 py-3 sm:px-5 sm:py-4 bg-slate-50/90 dark:bg-slate-800/35 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                <form id="propagationForm" class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 max-w-4xl mx-auto">
+                    <input type="text" id="propDomain" aria-label="Domain to check propagation" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="url" autofocus
+                        class="flex-1 px-3.5 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-xs"
+                        placeholder="example.com">
+                    <div class="flex gap-2.5 sm:contents">
+                        <select id="propType" aria-label="DNS record type"
+                            class="px-3 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-xs w-28 sm:w-28 bg-white dark:bg-slate-800">
+                            <option value="A" selected>A</option>
+                            <option value="AAAA">AAAA</option>
+                            <option value="CNAME">CNAME</option>
+                            <option value="MX">MX</option>
+                            <option value="NS">NS</option>
+                            <option value="TXT">TXT</option>
+                        </select>
+                        <button type="submit" id="propSearchBtn"
+                            class="flex-1 sm:flex-initial text-white bg-blue-600 hover:bg-blue-700 focus-visible:ring-4 focus-visible:outline-hidden focus-visible:ring-blue-500/40 font-medium rounded-xl text-sm px-6 py-2.5 min-h-[44px] transition-all shadow-md shrink-0">Search</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="px-4 py-2 sm:px-5 bg-slate-100/70 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-slate-600 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>Ready</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>Checking</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>Propagated</span>
+                    <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>Empty / Error</span>
+                </div>
+                <div class="flex items-center gap-2 ml-auto">
+                    <span id="propCounter" class="font-mono text-slate-600 dark:text-slate-300 font-medium">Loading nodes...</span>
+                    <button type="button" id="resetMapViewBtn"
+                        class="hidden px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors font-medium">
+                        Reset view
+                    </button>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-5 relative">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full min-h-[400px]">
-                    <div id="mapContainer"
-                        class="bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-inner z-10 lg:sticky lg:top-0 h-[300px] lg:h-[65vh] self-start">
+        <div class="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden overscroll-contain p-3 sm:p-5 custom-scrollbar">
+            <div class="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)] gap-4 lg:gap-6 lg:h-full lg:min-h-0">
+                <div id="mapWrapper"
+                    class="relative lg:col-span-7 h-[240px] sm:h-[300px] md:h-[340px] lg:h-full min-h-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 inset-shadow-sm">
+                    <div id="mapContainer" class="w-full h-full"></div>
+                    <div id="mapOverlayStatus"
+                        class="absolute inset-0 flex items-center justify-center p-4 text-center text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-900/85 backdrop-blur-xs z-20">
+                        <span>Loading interactive map...</span>
                     </div>
-                    <div id="propResults" class="space-y-3 h-full overflow-y-auto custom-scrollbar pr-2 pb-4">
-                        <div class="text-center text-slate-500 mt-10">Enter a domain and click Search to check global
-                            propagation.</div>
+                </div>
+                <div class="lg:col-span-5 lg:h-full min-h-0 lg:overflow-y-auto overscroll-contain custom-scrollbar lg:pr-1">
+                    <div id="propResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-3 pb-2">
+                        <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8 sm:py-12 text-sm">
+                            Enter a domain and click Search to check global propagation.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </dialog>
 
-    <script>
-        document.getElementById("year").innerText = new Date().getFullYear();
-
-        // --- THEME LOGIC ---
-        function initTheme() {
-            if (localStorage.theme === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
-                document.documentElement.classList.add('dark');
-            }
-        }
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.theme = 'light';
-            } else {
-                html.classList.add('dark');
-                localStorage.theme = 'dark';
-            }
-        }
-        initTheme();
-
-        function showToast(message) {
-            const x = document.getElementById("toast");
-            x.innerText = message; x.className = "show";
-            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
-        }
-
-        function copyText(id) {
-            navigator.clipboard.writeText(document.getElementById(id).innerText.replace('$ ', '')).then(() => showToast('Command Copied!'));
-        }
-
-        async function lookup() {
-            let domainInput = document.getElementById('domainInput').value.trim();
-            if (!domainInput) return;
-
-            // Remove http:// or https://
-            let domain = domainInput.replace(/^https?:\/\//i, '');
-
-            // Remove trailing paths or slashes
-            domain = domain.split('/')[0];
-
-            // Remove URL parameters (e.g., example.com?q=1 -> example.com)
-            domain = domain.split('?')[0];
-
-            // Update the input box to show the cleaned domain
-            document.getElementById('domainInput').value = domain;
-
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('propagation-banner').classList.add('hidden');
-            document.getElementById('propagation-banner').classList.remove('flex');
-            document.getElementById('error-msg').classList.add('hidden');
-
-            try {
-                const res = await fetch(`/api/lookup/${domain}`);
-                const data = await res.json();
-
-                if (data.error) throw new Error(data.error);
-
-                // Helper to render lists
-                const render = (id, list, mapFn) => {
-                    const el = document.getElementById(id);
-                    if (!list || list.length === 0) {
-                        el.innerHTML = '<span class="text-slate-500 italic">No records found</span>';
-                        return;
-                    }
-                    el.innerHTML = list.map(item =>
-                        `<div class="border-b border-slate-200 dark:border-slate-800/50 last:border-0 pb-1 last:pb-0">${mapFn ? mapFn(item) : item}</div>`
-                    ).join('');
-                };
-
-                // Render Lists
-                render('res-a', data.records.A);
-                render('res-aaaa', data.records.AAAA);
-                render('res-mx', data.records.MX, m => `<span class="text-slate-500 mr-2 font-bold w-6 inline-block">${m.priority}</span> ${m.exchange}`);
-                render('res-ns', data.records.NS);
-                render('res-txt', data.records.TXT, t => `<div class="p-2 bg-slate-100 dark:bg-slate-800/50 rounded break-all font-mono text-xs text-slate-600 dark:text-slate-400 mb-1 border border-slate-200 dark:border-slate-700/50">${t}</div>`);
-
-                // Render CNAME
-                const cnameEl = document.getElementById('res-cname');
-                const cnameCard = document.getElementById('card-cname');
-                if (data.records.CNAME) {
-                    cnameEl.innerText = data.records.CNAME;
-                    cnameCard.classList.remove('hidden');
-                } else {
-                    cnameCard.classList.add('hidden');
-                }
-
-                // Render CAA
-                render('res-caa', data.records.CAA, c =>
-                    `<span class="text-slate-500 mr-2 font-bold">${c.issue || c.issuewild || 'iodef'}</span> "${c.value}"`
-                );
-
-                // Render SOA (Object, not Array)
-                const soaEl = document.getElementById('res-soa');
-                if (data.records.SOA) {
-                    const s = data.records.SOA;
-                    soaEl.innerHTML = `
-                        <div class="grid grid-cols-[80px_1fr] gap-1">
-                            <span class="text-slate-500">Primary:</span> <span>${s.nsname}</span>
-                            <span class="text-slate-500">Admin:</span> <span>${s.hostmaster}</span>
-                            <span class="text-slate-500">Serial:</span> <span>${s.serial}</span>
-                            <span class="text-slate-500">Refresh:</span> <span>${s.refresh}</span>
-                        </div>
-                    `;
-                } else {
-                    soaEl.innerHTML = '<span class="text-slate-500 italic">No SOA record found</span>';
-                }
-
-                document.getElementById('results').classList.remove('hidden');
-                document.getElementById('results').classList.add('grid');
-
-                document.getElementById('banner-domain').innerText = domain;
-                document.getElementById('propagation-banner').classList.remove('hidden');
-                document.getElementById('propagation-banner').classList.add('flex');
-
-            } catch (err) {
-                const errDiv = document.getElementById('error-msg');
-                errDiv.innerText = err.message || "Lookup Failed";
-                errDiv.classList.remove('hidden');
-            }
-        }
-
-        // --- Typewriter & IP Logic ---
-        function startPlaceholderAnimation() {
-            const input = document.getElementById('domainInput');
-            const phrases = ["Lookup a Domain: e.g. wiredalter.com", "Check DNS: e.g. google.com"];
-            let phraseIndex = 0; let charIndex = 0; let isDeleting = false;
-
-            function typeLoop() {
-                if (input.value) { setTimeout(typeLoop, 2000); return; }
-                const currentPhrase = phrases[phraseIndex];
-                input.placeholder = currentPhrase.substring(0, charIndex);
-
-                let typeSpeed = 50;
-                if (isDeleting) { typeSpeed = 25; charIndex--; } else { charIndex++; }
-
-                if (!isDeleting && charIndex === currentPhrase.length + 1) { typeSpeed = 2000; isDeleting = true; }
-                else if (isDeleting && charIndex === 0) { isDeleting = false; phraseIndex = (phraseIndex + 1) % phrases.length; typeSpeed = 500; }
-
-                setTimeout(typeLoop, typeSpeed);
-            }
-            typeLoop();
-        }
-
-        fetch('https://ip.wiredalter.com/api/info')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('my-ip').innerText = data.ip;
-                document.getElementById('my-flag').innerText = getFlagEmoji(data.country_code || 'XX');
-                document.getElementById('my-connection').classList.remove('hidden');
-                startPlaceholderAnimation();
-            })
-            .catch(() => startPlaceholderAnimation());
-
-        function getFlagEmoji(countryCode) {
-            if (!countryCode || countryCode.length !== 2) return '';
-            const codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt());
-            return String.fromCodePoint(...codePoints);
-        }
-
-        // --- PROPAGATION MODAL & MAP LOGIC ---
-        let map = null;
-        let tileLayer = null;
-        let markers = {};
-        let serversList = [];
-
-        function getTileUrl() {
-            const isDark = document.documentElement.classList.contains('dark');
-            return isDark 
-                ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-                : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
-        }
-
-        function initMap() {
-            if (map) return;
-
-            const worldBounds = L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180));
-
-            map = L.map('mapContainer', {
-                maxBounds: worldBounds,
-                maxBoundsViscosity: 1.0,
-                minZoom: 1.5,
-                worldCopyJump: true
-            }).setView([20, 0], 2);
-
-            tileLayer = L.tileLayer(getTileUrl(), {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 19,
-                noWrap: false
-            }).addTo(map);
-
-            if (window.ResizeObserver) {
-                new ResizeObserver(() => {
-                    if (map) map.invalidateSize();
-                }).observe(document.getElementById('mapContainer'));
-            }
-
-            // Fetch servers and plot initially
-            fetch('/api/propagation-servers?t=' + Date.now())
-                .then(res => {
-                    if (!res.ok) throw new Error('Failed to load servers (HTTP ' + res.status + ')');
-                    return res.json();
-                })
-                .then(servers => {
-                    serversList = servers;
-                    servers.forEach(s => {
-                        const marker = L.circleMarker([s.lat, s.lng], {
-                            radius: 6,
-                            fillColor: "#3b82f6", // blue
-                            color: "#fff",
-                            weight: 2,
-                            opacity: 1,
-                            fillOpacity: 0.8
-                        }).addTo(map);
-                        marker.bindPopup(`<b>${s.name}</b><br>${s.location}`);
-                        markers[s.id] = marker;
-                    });
-                })
-                .catch(err => {
-                    console.error('Servers fetch error:', err);
-                    document.getElementById('propResults').innerHTML = `<div class="text-center text-red-500 mt-10 p-4 bg-red-500/10 rounded-xl border border-red-500/20"><b>Error Loading Map Nodes</b><br>Could not load the global servers. Make sure the backend is fully deployed and try refreshing without cache.</div>`;
-                });
-        }
-
-        function updateMapTheme() {
-            if (!map || !tileLayer) return;
-            tileLayer.setUrl(getTileUrl());
-        }
-
-        // Hook into toggleTheme to update map
-        const originalToggleTheme = toggleTheme;
-        toggleTheme = function () {
-            originalToggleTheme();
-            updateMapTheme();
-        };
-
-        function openPropagationModal() {
-            const modal = document.getElementById('propagationModal');
-            modal.showModal();
-            const currentDomain = document.getElementById('domainInput').value;
-            if (currentDomain) {
-                document.getElementById('propDomain').value = currentDomain;
-            }
-
-            // Map needs to invalidate size after modal opens since its container size changed
-            setTimeout(() => {
-                initMap();
-                if (map) map.invalidateSize();
-            }, 100);
-        }
-
-        function closePropagationModal() {
-            document.getElementById('propagationModal').close();
-        }
-
-        async function checkPropagation() {
-            let domain = document.getElementById('propDomain').value.trim();
-            const type = document.getElementById('propType').value;
-            if (!domain) return;
-
-            domain = domain.replace(/^https?:\/\//i, '').split('/')[0].split('?')[0];
-            document.getElementById('propDomain').value = domain;
-
-            const resultsContainer = document.getElementById('propResults');
-            resultsContainer.innerHTML = '';
-
-            if (serversList.length === 0) return;
-
-            // Reset markers
-            serversList.forEach(s => {
-                if (markers[s.id]) {
-                    markers[s.id].setStyle({ fillColor: "#94a3b8" }); // Reset to gray
-                }
-
-                // Create row
-                const row = document.createElement('div');
-                row.id = `row-${s.id}`;
-                row.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm transition-all";
-                row.innerHTML = `
-                    <div class="flex items-center gap-3 mb-2 sm:mb-0 w-full sm:w-1/3">
-                        <span class="text-xl" title="${s.location}">${getFlagEmoji(s.country)}</span>
-                        <div>
-                            <div class="font-bold text-slate-800 dark:text-white text-sm">${s.name}</div>
-                            <div class="text-xs text-slate-500">${s.location}</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex justify-center w-full">
-                        <span id="val-${s.id}" class="text-slate-400 text-sm font-mono flex items-center gap-2">
-                            <span class="relative flex h-3 w-3">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
-                            </span> Checking...
-                        </span>
-                    </div>
-                    <div class="w-full sm:w-8 flex justify-end">
-                        <span id="status-${s.id}"></span>
-                    </div>
-                `;
-                resultsContainer.appendChild(row);
-            });
-
-            // Perform concurrent lookups
-            for (const s of serversList) {
-                fetch(`/api/propagate/${domain}/${type}?server=${s.ip}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const valSpan = document.getElementById(`val-${s.id}`);
-                        const statusSpan = document.getElementById(`status-${s.id}`);
-
-                        if (data.error) throw new Error(data.error);
-
-                        // Format data
-                        let valStr = '';
-                        if (Array.isArray(data.data)) {
-                            if (data.data.length > 0) {
-                                if (typeof data.data[0] === 'object') {
-                                    valStr = data.data.map(d => JSON.stringify(d)).join(', ');
-                                } else {
-                                    valStr = data.data.join(', ');
-                                }
-                            } else {
-                                valStr = 'No records';
-                            }
-                        } else if (typeof data.data === 'object') {
-                            valStr = data.data.nsname || data.data.value || JSON.stringify(data.data);
-                        } else {
-                            valStr = data.data || 'No records';
-                        }
-
-                        valSpan.innerHTML = `<span class="text-slate-800 dark:text-slate-200 break-all">${valStr}</span>`;
-
-                        if (valStr !== 'No records' && !data.error) {
-                            statusSpan.innerHTML = `<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-                            markers[s.id].setStyle({ fillColor: "#22c55e" }); // green
-                        } else {
-                            statusSpan.innerHTML = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                            markers[s.id].setStyle({ fillColor: "#ef4444" }); // red
-                        }
-                    })
-                    .catch(err => {
-                        document.getElementById(`val-${s.id}`).innerHTML = `<span class="text-red-500 text-xs">${err.message || 'Error'}</span>`;
-                        document.getElementById(`status-${s.id}`).innerHTML = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                        markers[s.id].setStyle({ fillColor: "#ef4444" }); // red
-                    });
-            }
-        }
-    </script>
+    <script defer src="/assets/js/app.js"></script>
 </body>
 
 </html>
