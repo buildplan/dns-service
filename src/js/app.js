@@ -143,7 +143,7 @@
             });
             render('res-ns', data.records.NS);
             render('res-txt', data.records.TXT, (row, t) => {
-                row.appendChild(createEl('div', 'p-2 bg-slate-100 dark:bg-slate-800/50 rounded break-all font-mono text-xs text-slate-600 dark:text-slate-400 mb-1 border border-slate-200 dark:border-slate-700/50', t));
+                row.appendChild(createEl('div', 'p-2 bg-slate-100 dark:bg-slate-800/50 rounded-sm break-all font-mono text-xs text-slate-600 dark:text-slate-400 mb-1 border border-slate-200 dark:border-slate-700/50', t));
             });
 
             const cnameEl = document.getElementById('res-cname');
@@ -735,7 +735,7 @@
         serversList.forEach(s => {
             setMarkerStatus(s.id, 'checking', 'Checking...');
 
-            const row = createEl('button', 'w-full text-left flex flex-col gap-2 p-3.5 sm:p-4 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500');
+            const row = createEl('button', 'w-full text-left flex flex-col gap-2 p-3.5 sm:p-4 bg-white dark:bg-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/50 shadow-xs transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500');
             row.type = 'button';
             row.id = `row-${s.id}`;
             row.dataset.serverRow = '1';

@@ -49,13 +49,13 @@
             </div>
 
             <div
-                class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-sm transition-colors">
+                class="flex gap-1 bg-slate-200/50 dark:bg-slate-800/50 rounded-lg p-1 border border-slate-300/50 dark:border-slate-700/50 backdrop-blur-xs transition-colors">
                 <a href="https://www.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">HOME</a>
                 <a href="https://ip.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">IP</a>
                 <a href="#"
-                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-sm cursor-default">DNS</a>
+                    class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-white bg-blue-600 shadow-xs cursor-default">DNS</a>
                 <a href="https://whois.wiredalter.com"
                     class="px-4 py-2 md:px-3 md:py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300 dark:hover:bg-slate-700 transition-all">WHOIS</a>
                 <a href="https://audit.wiredalter.com"
@@ -92,7 +92,7 @@
         </div>
     </nav>
 
-    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 pb-20 md:py-20 w-full space-y-10">
+    <main class="grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 pb-20 md:py-20 w-full space-y-10">
 
         <div class="text-center space-y-8 md:space-y-6 max-w-3xl mx-auto">
             <div class="space-y-2">
@@ -104,11 +104,11 @@
 
             <div class="relative max-w-lg mx-auto mt-6">
                 <input type="text" id="domainInput" aria-label="Domain name" autocomplete="off" autocapitalize="none" spellcheck="false"
-                    class="block w-full p-4 pl-6 pr-28 text-sm rounded-xl search-input placeholder-slate-400 dark:placeholder-slate-500 shadow-xl"
+                    class="block w-full p-4 pl-6 pr-28 text-sm rounded-xl search-input placeholder:text-slate-400 dark:placeholder:text-slate-500 shadow-xl"
                     placeholder="example.com">
                 <div class="absolute right-2.5 top-2.5 flex gap-2">
                     <button type="button" data-open-propagation="1"
-                        class="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-slate-300 dark:focus:ring-slate-800 font-medium rounded-lg text-sm px-3 py-2 transition-all shadow border border-slate-300 dark:border-slate-700"
+                        class="text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 focus:ring-4 focus:outline-hidden focus:ring-slate-300 dark:focus:ring-slate-800 font-medium rounded-lg text-sm px-3 py-2 transition-all shadow-sm border border-slate-300 dark:border-slate-700"
                         title="Global Propagation Checker" aria-label="Global Propagation Checker">
                         <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -117,7 +117,7 @@
                         </svg>
                     </button>
                     <button type="button" id="lookupBtn"
-                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
+                        class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-blue-800 font-medium rounded-lg text-sm px-4 py-2 transition-all shadow-lg">Check</button>
                 </div>
             </div>
         </div>
@@ -141,10 +141,10 @@
         </div>
 
         <div id="propagation-banner"
-            class="hidden mb-6 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm shadow-sm transition-all glass-panel">
+            class="hidden mb-6 bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/50 rounded-xl p-5 flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-xs shadow-xs transition-all glass-panel">
             <div class="flex items-center gap-4 mb-4 sm:mb-0">
                 <div
-                    class="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 shadow-sm">
+                    class="p-2.5 bg-blue-100 dark:bg-blue-900/40 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 shadow-xs">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
@@ -159,7 +159,7 @@
                 </div>
             </div>
             <button type="button" data-open-propagation="1"
-                class="w-full sm:w-auto shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-xl text-sm px-5 py-2.5 transition-all shadow-md flex justify-center items-center gap-2">
+                class="w-full sm:w-auto shrink-0 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-hidden focus:ring-blue-800 font-medium rounded-xl text-sm px-5 py-2.5 transition-all shadow-md flex justify-center items-center gap-2">
                 Check Propagation
             </button>
         </div>
@@ -303,7 +303,7 @@
 
         <section class="max-w-3xl mx-auto px-4 pb-16">
             <div
-                class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-sm shadow-sm">
+                class="bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/60 rounded-2xl p-8 text-center backdrop-blur-xs shadow-xs">
                 <div class="inline-flex items-center justify-center p-3 bg-blue-500/10 rounded-full mb-4">
                     <svg class="w-6 h-6 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
@@ -343,7 +343,7 @@
 
     <!-- Propagation Modal -->
     <dialog id="propagationModal" aria-labelledby="propagation-modal-title" closedby="any"
-        class="w-[calc(100dvw-1rem)] sm:w-[min(94dvw,68rem)] h-[min(92dvh,54rem)] lg:h-[min(86dvh,48rem)] max-h-[92dvh] p-0 m-auto rounded-2xl overflow-hidden shadow-2xl backdrop:bg-slate-900/65 backdrop:backdrop-blur-sm border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100">
+        class="w-[calc(100dvw-1rem)] sm:w-[min(94dvw,68rem)] h-[min(92dvh,54rem)] lg:h-[min(86dvh,48rem)] max-h-[92dvh] p-0 m-auto rounded-2xl overflow-hidden shadow-2xl backdrop:bg-slate-900/65 backdrop:backdrop-blur-xs border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100">
         <div class="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <h2 id="propagation-modal-title" class="text-base sm:text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5 sm:gap-3">
                     <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -365,11 +365,11 @@
             <div class="px-4 py-3 sm:px-5 sm:py-4 bg-slate-50/90 dark:bg-slate-800/35 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <form id="propagationForm" class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 max-w-4xl mx-auto">
                     <input type="text" id="propDomain" aria-label="Domain to check propagation" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="url" autofocus
-                        class="flex-1 px-3.5 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-sm"
+                        class="flex-1 px-3.5 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-xs"
                         placeholder="example.com">
                     <div class="flex gap-2.5 sm:contents">
                         <select id="propType" aria-label="DNS record type"
-                            class="px-3 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-sm w-28 sm:w-28 bg-white dark:bg-slate-800">
+                            class="px-3 py-2.5 min-h-[44px] text-sm rounded-xl search-input shadow-xs w-28 sm:w-28 bg-white dark:bg-slate-800">
                             <option value="A" selected>A</option>
                             <option value="AAAA">AAAA</option>
                             <option value="CNAME">CNAME</option>
@@ -378,7 +378,7 @@
                             <option value="TXT">TXT</option>
                         </select>
                         <button type="submit" id="propSearchBtn"
-                            class="flex-1 sm:flex-initial text-white bg-blue-600 hover:bg-blue-700 focus-visible:ring-4 focus-visible:outline-none focus-visible:ring-blue-500/40 font-medium rounded-xl text-sm px-6 py-2.5 min-h-[44px] transition-all shadow-md shrink-0">Search</button>
+                            class="flex-1 sm:flex-initial text-white bg-blue-600 hover:bg-blue-700 focus-visible:ring-4 focus-visible:outline-hidden focus-visible:ring-blue-500/40 font-medium rounded-xl text-sm px-6 py-2.5 min-h-[44px] transition-all shadow-md shrink-0">Search</button>
                     </div>
                 </form>
             </div>
@@ -402,10 +402,10 @@
         <div class="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden overscroll-contain p-3 sm:p-5 custom-scrollbar">
             <div class="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)] gap-4 lg:gap-6 lg:h-full lg:min-h-0">
                 <div id="mapWrapper"
-                    class="relative lg:col-span-7 h-[240px] sm:h-[300px] md:h-[340px] lg:h-full min-h-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shadow-inner">
+                    class="relative lg:col-span-7 h-[240px] sm:h-[300px] md:h-[340px] lg:h-full min-h-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 inset-shadow-sm">
                     <div id="mapContainer" class="w-full h-full"></div>
                     <div id="mapOverlayStatus"
-                        class="absolute inset-0 flex items-center justify-center p-4 text-center text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-900/85 backdrop-blur-sm z-20">
+                        class="absolute inset-0 flex items-center justify-center p-4 text-center text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-900/85 backdrop-blur-xs z-20">
                         <span>Loading interactive map...</span>
                     </div>
                 </div>
