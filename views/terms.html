@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms & Privacy - WiredAlter DNS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; }</style>
+    <link rel="stylesheet" href="/assets/app.css">
 </head>
-<body class="min-h-screen flex flex-col items-center py-12 px-4">
+<body class="bg-[#020617] text-slate-200 min-h-screen flex flex-col items-center py-12 px-4">
 
     <div class="max-w-2xl w-full space-y-8">
         
@@ -30,7 +29,7 @@
             <div class="mt-4 bg-slate-900/50 p-4 rounded border border-slate-800 text-sm">
                 <strong class="text-white block mb-1">Cloudflare & Security Cookies</strong>
                 <p class="text-slate-400">
-                    This website is protected by <a href="https://www.cloudflare.com" target="_blank" class="text-blue-400 hover:underline">Cloudflare</a>. 
+                    This website is protected by <a href="https://www.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Cloudflare</a>. 
                     Cloudflare may place strictly necessary security cookies (such as <code>__cf_bm</code> or <code>cf_clearance</code>) on your device. 
                     These are used solely for bot detection and security purposes, not for advertising tracking.
                 </p>
@@ -67,8 +66,6 @@
 
     </div>
 
-    <script>
-        document.getElementById('date').innerText = new Date().toLocaleDateString();
-    </script>
+    <script defer src="/assets/js/terms.js"></script>
 </body>
 </html>

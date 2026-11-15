@@ -6,12 +6,13 @@ WORKDIR /usr/src/app
 # Install dumb-init for process management
 RUN apk add --no-cache dumb-init
 
-# Install Dependencies
+# Install all dependencies (including build-time Tailwind, MapLibre, and font assets)
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci
 
-# Copy App Code
+# Copy App Code & Build Self-Hosted Frontend Assets
 COPY . .
+RUN npm run build && npm prune --omit=dev && npm cache clean --force
 
 # === Final stage: Create minimal runtime image ===
 FROM dhi.io/node:26.13.1-alpine3.24@sha256:f7b40a7a5e3b75dafd68687f9f5cd4989a2ca02a5004e03147596e7bf8653acc

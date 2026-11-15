@@ -154,12 +154,13 @@ RUN chown -R node:node /app
 # Switch to non-root user
 USER node
 
-# 4. Install Dependencies
+# 4. Install Dependencies & Build Frontend Assets
 COPY --chown=node:node package.json package-lock.json* ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci
 
-# 5. Copy App Code
+# 5. Copy App Code & Build Static Assets
 COPY --chown=node:node . .
+RUN npm run build && npm prune --omit=dev && npm cache clean --force
 
 # 6. Expose Port 5000 (DNS Service)
 EXPOSE 5000

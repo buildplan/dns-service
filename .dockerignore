@@ -1,5 +1,6 @@
 # --- Node Dependencies & Logs ---
 node_modules
+views/assets
 npm-debug.log
 yarn-error.log
 
