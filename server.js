@@ -18,6 +18,15 @@ const trustProxyCount = process.env.TRUST_PROXY ? parseInt(process.env.TRUST_PRO
 app.set('trust proxy', trustProxyCount);
 
 app.disable('x-powered-by');
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'none'");
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Permissions-Policy', 'camera=(), geolocation=(), microphone=(), focus-without-user-activation=()');
+    next();
+});
 app.use(cors());
 
 // Configure LRU Cache for DNS lookups
