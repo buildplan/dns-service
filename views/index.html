@@ -343,9 +343,8 @@
 
     <!-- Propagation Modal -->
     <dialog id="propagationModal" aria-labelledby="propagation-modal-title" closedby="any"
-        class="w-[calc(100dvw-1rem)] sm:w-[min(94dvw,68rem)] max-h-[92dvh] p-0 m-auto rounded-2xl overflow-hidden shadow-2xl backdrop:bg-slate-900/65 backdrop:backdrop-blur-sm border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100">
-        <div class="flex flex-col flex-1 min-h-0 lg:h-[min(86dvh,48rem)]">
-            <div class="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
+        class="w-[calc(100dvw-1rem)] sm:w-[min(94dvw,68rem)] h-[min(92dvh,54rem)] lg:h-[min(86dvh,48rem)] max-h-[92dvh] p-0 m-auto rounded-2xl overflow-hidden shadow-2xl backdrop:bg-slate-900/65 backdrop:backdrop-blur-sm border border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100">
+        <div class="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
                 <h2 id="propagation-modal-title" class="text-base sm:text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2.5 sm:gap-3">
                     <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -400,21 +399,20 @@
                 </div>
             </div>
 
-            <div class="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden p-3 sm:p-5 custom-scrollbar">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 lg:h-full">
-                    <div id="mapWrapper"
-                        class="relative lg:col-span-6 h-[240px] sm:h-[300px] md:h-[340px] lg:h-full lg:min-h-[380px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shadow-inner">
-                        <div id="mapContainer" class="w-full h-full"></div>
-                        <div id="mapOverlayStatus"
-                            class="absolute inset-0 flex items-center justify-center p-4 text-center text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-900/85 backdrop-blur-sm z-20">
-                            <span>Loading interactive map...</span>
-                        </div>
+        <div class="flex-1 min-h-0 overflow-y-auto lg:overflow-hidden overscroll-contain p-3 sm:p-5 custom-scrollbar">
+            <div class="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-[minmax(0,1fr)] gap-4 lg:gap-6 lg:h-full lg:min-h-0">
+                <div id="mapWrapper"
+                    class="relative lg:col-span-7 h-[240px] sm:h-[300px] md:h-[340px] lg:h-full min-h-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 shadow-inner">
+                    <div id="mapContainer" class="w-full h-full"></div>
+                    <div id="mapOverlayStatus"
+                        class="absolute inset-0 flex items-center justify-center p-4 text-center text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-100/90 dark:bg-slate-900/85 backdrop-blur-sm z-20">
+                        <span>Loading interactive map...</span>
                     </div>
-                    <div class="lg:col-span-6 lg:h-full lg:overflow-y-auto custom-scrollbar lg:pr-1">
-                        <div id="propResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-3 pb-2">
-                            <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8 sm:py-12 text-sm">
-                                Enter a domain and click Search to check global propagation.
-                            </div>
+                </div>
+                <div class="lg:col-span-5 lg:h-full min-h-0 lg:overflow-y-auto overscroll-contain custom-scrollbar lg:pr-1">
+                    <div id="propResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-3 pb-2">
+                        <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8 sm:py-12 text-sm">
+                            Enter a domain and click Search to check global propagation.
                         </div>
                     </div>
                 </div>

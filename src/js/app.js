@@ -418,7 +418,7 @@
 
     function getMapPadding() {
         const w = document.getElementById('mapContainer')?.clientWidth || 320;
-        const pad = w < 480 ? 22 : 34;
+        const pad = w < 480 ? 20 : 28;
         return { top: pad, bottom: pad, left: pad, right: pad };
     }
 
